@@ -30,7 +30,7 @@ public class TimeAList {
         //初始化lst作為實驗容器，每次迴圈會重新初始化
         AList<Integer> lst;
         int N = 1000;
-        while(N <= 128000){
+        while(N <= 64000){
             lst = new AList<>();
             int ops = 0;
             Stopwatch sw = new Stopwatch();//使用大學給的類別來計算每次addLast完一定次數元素後，所花的時間
