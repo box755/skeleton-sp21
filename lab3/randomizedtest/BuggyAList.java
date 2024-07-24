@@ -27,7 +27,7 @@ public class BuggyAList<Item> {
     /** Resizes the underlying array to the target capacity. */
     private void resize(int capacity) {
         Item[] a = (Item[]) new Object[capacity];
-        for (int i = 0; i < size; i += 1) {
+        for (int i = 0; i < size ; i += 1) {
             a[i] = items[i];
         }
         items = a;
@@ -60,7 +60,7 @@ public class BuggyAList<Item> {
       * returns deleted item. */
     public Item removeLast() {
         if ((size < items.length / 4) && (size > 4)) {
-            resize(size / 4);
+            resize(size);//原本是resize(size/4)，會讓新的陣列空間不夠。resize(size)才能讓新的陣列大小剛好能容納就陣列元素。
         }
         Item x = getLast();
         items[size - 1] = null;
