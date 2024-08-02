@@ -13,7 +13,7 @@ public class TestArrayDequeEC {
         StudentArrayDeque<Integer> buggyDeque = new StudentArrayDeque<>();
         ArrayDeque<Integer> correctDeque = new ArrayDeque<>();
 
-        int N = 100;
+        int N = 5000;
 
         for(int i=0; i<N; i++){
             int operationNum = StdRandom.uniform(0, 4);
