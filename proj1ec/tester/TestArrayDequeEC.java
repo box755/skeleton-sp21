@@ -14,7 +14,6 @@ public class TestArrayDequeEC {
         ArrayDeque<Integer> correctDeque = new ArrayDeque<>();
 
         int N = 200;
-        StringBuilder failureSequence = new StringBuilder();
 
         for (int i = 0; i < N; i++) {
             int operationNum = StdRandom.uniform(0, 4);
@@ -22,21 +21,21 @@ public class TestArrayDequeEC {
             if (operationNum == 0) {
                 int number = StdRandom.uniform(0, 100);
                 correctDeque.addFirst(number);
-                buggyDeque.addFirst(number);
-                failureSequence.append("addFirst(").append(number).append(")\n");
+                buggyDeque.addFirst((number));
+                System.out.println("addFirst(" + number + ")");
                 Integer buggySize = buggyDeque.size();
                 Integer correctSize = correctDeque.size();
-                assertEquals("Failure sequence: " + failureSequence.toString(), correctSize, buggySize);
+                assertEquals("The size after addFirst(" + number + ") should be " + correctSize + " rather than " + buggySize, buggySize, correctSize);
             }
             // addLast
             else if (operationNum == 1) {
                 int number = StdRandom.uniform(0, 100);
                 correctDeque.addLast(number);
-                buggyDeque.addLast(number);
-                failureSequence.append("addLast(").append(number).append(")\n");
+                buggyDeque.addLast((number));
+                System.out.println("addLast(" + number + ")");
                 Integer buggySize = buggyDeque.size();
                 Integer correctSize = correctDeque.size();
-                assertEquals("Failure sequence: " + failureSequence.toString(), correctSize, buggySize);
+                assertEquals("The size after addLast(" + number + ") should be " + correctSize + " rather than " + buggySize, buggySize, correctSize);
             }
             // removeFirst
             else if (operationNum == 2) {
@@ -45,8 +44,8 @@ public class TestArrayDequeEC {
                 }
                 Integer removedBuggy = buggyDeque.removeFirst();
                 Integer removeCorrect = correctDeque.removeFirst();
-                failureSequence.append("removeFirst()\n");
-                assertEquals("Failure sequence: " + failureSequence.toString(), removeCorrect, removedBuggy);
+                assertEquals("The value removed by removeFirst() should be " + removeCorrect + " rather than " + removedBuggy, removedBuggy, removeCorrect);
+                System.out.println("removeFirst() " + removeCorrect);
             }
             // removeLast
             else if (operationNum == 3) {
@@ -55,8 +54,8 @@ public class TestArrayDequeEC {
                 }
                 Integer removedBuggy = buggyDeque.removeLast();
                 Integer removeCorrect = correctDeque.removeLast();
-                failureSequence.append("removeLast()\n");
-                assertEquals("Failure sequence: " + failureSequence.toString(), removeCorrect, removedBuggy);
+                assertEquals("The value removed by removeLast() should be " + removeCorrect + " rather than " + removedBuggy, removedBuggy, removeCorrect);
+                System.out.println("removeLast() " + removeCorrect);
             }
         }
     }
