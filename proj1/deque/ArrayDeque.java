@@ -95,7 +95,7 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
         Item[] newArray = (Item[]) new Object[items.length];
         System.arraycopy(items, 1, newArray,0,  items.length - 1);
         items = newArray;
-        items[size] = null;
+        items[size - 1] = null;
         size --;
         return item;
     }
