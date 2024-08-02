@@ -1,12 +1,36 @@
 package deque;
 
+import edu.princeton.cs.introcs.StdRandom;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 
 public class ArrayDequeTest {
+    @Test
+    public void addRemoveFirstTest(){
+        deque.ArrayDeque<Integer> al1 = new deque.ArrayDeque<Integer>();
+        al1.addFirst(10);
+        al1.addFirst(20);
+        assertEquals(10, (int)al1.getLast() );
+        al1.removeFirst();
+        assertEquals(10, (int)al1.get(0) );
+        al1.removeFirst();
+        al1.addFirst(10);
+        al1.addFirst(20);
+        al1.addFirst(30);
+        al1.addFirst(40);
+        assertEquals(10, (int)al1.get(3) );
+        al1.removeFirst();
+        al1.removeFirst();
+        al1.removeFirst();
+        assertEquals(10, (int)al1.get(0) );
 
-    
+
+
+    }
+
+
+
     @Test
     public void addRemoveTest() {
 
@@ -29,7 +53,7 @@ public class ArrayDequeTest {
         al1.removeLast();
         al1.removeLast();
 
-        int size = al1.size;
+        int size = al1.size();
 
         assertEquals( 0, size);
         assertEquals(null, al1.getLast());
@@ -48,6 +72,8 @@ public class ArrayDequeTest {
         String s = al1.removeLast();
         double d = al2.removeLast();
         boolean b = al3.removeLast();
+        assertEquals("string", s);
+
     }
 
     @Test
@@ -74,4 +100,7 @@ public class ArrayDequeTest {
 
 
     }
+
+
+
 }
