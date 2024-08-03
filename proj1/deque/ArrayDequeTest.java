@@ -1,104 +1,126 @@
 package deque;
 
 import edu.princeton.cs.introcs.StdRandom;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 
 public class ArrayDequeTest {
-    @Test
-    public void addRemoveFirstTest(){
-        deque.ArrayDeque<Integer> al1 = new deque.ArrayDeque<Integer>();
-        al1.addFirst(10);
-        al1.addFirst(20);
-        assertEquals(10, (int)al1.getLast() );
-        al1.removeFirst();
-        assertEquals(10, (int)al1.get(0) );
-        al1.removeFirst();
-        al1.addFirst(10);
-        al1.addFirst(20);
-        al1.addFirst(30);
-        al1.addFirst(40);
-        assertEquals(10, (int)al1.get(3) );
-        al1.removeFirst();
-        al1.removeFirst();
-        al1.removeFirst();
-        assertEquals(10, (int)al1.get(0) );
+    private ArrayDeque<Integer> deque;
 
-
-
-    }
-
-
-
-    @Test
-    public void addRemoveTest() {
-
-        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-        deque.ArrayDeque<Integer> al1 = new deque.ArrayDeque<Integer>();
-        // should be empty
-        al1.addLast(10);
-        assertEquals(10, (int)al1.getLast() );
-        al1.removeLast();
-        assertEquals(null, al1.getLast() );
+    @Before
+    public void setUp() {
+        deque = new ArrayDeque<>();
     }
 
     @Test
-    public void removeEmptyTest() {
-        deque.ArrayDeque<Integer> al1 = new deque.ArrayDeque<>();
-        al1.addLast(3);
-
-        al1.removeLast();
-        al1.removeLast();
-        al1.removeLast();
-        al1.removeLast();
-
-        int size = al1.size();
-
-        assertEquals( 0, size);
-        assertEquals(null, al1.getLast());
+    public void testAddFirst() {
+        deque.addFirst(1);
+        assertEquals(1, (int) deque.get(0));
+        assertEquals(1, deque.size());
     }
 
     @Test
-    public void multipleParamTest() {
-        deque.ArrayDeque<String>  al1 = new deque.ArrayDeque<String>();
-        deque.ArrayDeque<Double>  al2 = new deque.ArrayDeque<Double>();
-        deque.ArrayDeque<Boolean> al3 = new deque.ArrayDeque<Boolean>();
-
-        al1.addLast("string");
-        al2.addLast(3.14159);
-        al3.addLast(true);
-
-        String s = al1.removeLast();
-        double d = al2.removeLast();
-        boolean b = al3.removeLast();
-        assertEquals("string", s);
-
+    public void testAddLast() {
+        deque.addLast(1);
+        deque.addLast(2);
+        assertEquals(1, (int) deque.get(0));
+        assertEquals(2, (int) deque.get(1));
+        assertEquals(2, deque.size());
     }
 
     @Test
-    /* check if null is return when removing from an empty deque.LinkedListDeque. */
-    public void emptyNullReturnTest() {
-        deque.ArrayDeque<String>  al1 = new deque.ArrayDeque<String>();
-
-        boolean passed1 = false;
-        boolean passed2 = false;
-        assertEquals("Should return null when removeFirst is called on an empty Deque,", null, al1.removeLast());
-        al1.addLast("test");
-        assertEquals("Should return null when removeLast is called on an empty Deque,", "test", al1.removeLast());
+    public void testRemoveFirst() {
+        deque.addLast(1);
+        deque.addLast(2);
+        int removedItem = deque.removeFirst();
+        assertEquals(1, removedItem);
+        assertEquals(1, deque.size());
+        assertEquals(2, (int) deque.get(0));
     }
 
     @Test
-    /* Add large number of elements to deque; check if order is correct. */
-    public void bigLLDequeTest() {
+    public void testRemoveLast() {
+        deque.addLast(1);
+        deque.addLast(2);
+        int removedItem = deque.removeLast();
+        assertEquals(2, removedItem);
+        assertEquals(1, deque.size());
+        assertEquals(1, (int) deque.get(0));
+    }
 
-        deque.ArrayDeque<String>  al1 = new deque.ArrayDeque<String>();
-        for (int i = 0; i < 1000000; i++) {
-            al1.addLast(Integer.toString(i));
-            assertEquals("Should have the same value", Integer.toString(i), al1.removeLast());
+    @Test
+    public void testIsEmpty() {
+        assertTrue(deque.isEmpty());
+        deque.addLast(1);
+        assertFalse(deque.isEmpty());
+    }
+
+    @Test
+    public void testSize() {
+        assertEquals(0, deque.size());
+        deque.addLast(1);
+        deque.addLast(2);
+        assertEquals(2, deque.size());
+    }
+
+    @Test
+    public void testGet() {
+        deque.addLast(1);
+        deque.addLast(2);
+        assertEquals(1, (int) deque.get(0));
+        assertEquals(2, (int) deque.get(1));
+    }
+
+    @Test
+    public void testResize() {
+        for (int i = 0; i < 20; i++) {
+            deque.addLast(i);
         }
+        assertEquals(20, deque.size());
+        for (int i = 0; i < 20; i++) {
+            assertEquals(i, (int) deque.get(i));
+        }
+    }
 
+    @Test
+    public void testIterator() {
+        deque.addLast(1);
+        deque.addLast(2);
+        deque.addLast(3);
 
+        int sum = 0;
+        for (int i : deque) {
+            sum += i;
+        }
+        assertEquals(6, sum);
+    }
+
+    @Test
+    public void testEquals() {
+        ArrayDeque<Integer> deque1 = new ArrayDeque<>();
+        deque1.addLast(1);
+        deque1.addLast(2);
+
+        ArrayDeque<Integer> deque2 = new ArrayDeque<>();
+        deque2.addLast(1);
+        deque2.addLast(2);
+
+        assertTrue(deque1.equals(deque2));
+
+        deque2.addLast(3);
+        assertFalse(deque1.equals(deque2));
+    }
+
+    @Test
+    public void testCopyConstructor() {
+        deque.addLast(1);
+        deque.addLast(2);
+        ArrayDeque<Integer> dequeCopy = new ArrayDeque<>(deque);
+
+        assertEquals(deque.size(), dequeCopy.size());
+        assertTrue(deque.equals(dequeCopy));
     }
 
 

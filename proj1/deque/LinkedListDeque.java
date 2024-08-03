@@ -2,13 +2,13 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
 
     private class IntNode{
-        public Item item;
+        public T item;
         public IntNode prv;
         public IntNode next;
-        public IntNode(Item item, IntNode prv, IntNode next){
+        public IntNode(T item, IntNode prv, IntNode next){
             this.item = item;
             this.prv = prv;
             this.next = next;
@@ -29,26 +29,25 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
         this();
         int current = 0;
         while(current < other.size()){
-            this.addLast((Item)other.get(current));//這裡要轉型，因為我們給的參數other的型別是LinkedListDeque，但這個型別並沒有泛型，所以我們要給它。
+            this.addLast((T)other.get(current));//這裡要轉型，因為我們給的參數other的型別是LinkedListDeque，但這個型別並沒有泛型，所以我們要給它。
             current += 1;
-            size += 1;
         }
     }
 
-    public LinkedListDeque(Item item){
+    public LinkedListDeque(T item){
         this();
         addLast(item);
     }
 
     @Override
-    public void addFirst(Item item){
+    public void addFirst(T item){
         sentinel.next = new IntNode(item, sentinel, sentinel.next);
         sentinel.next.next.prv = sentinel.next;
         this.size += 1;
     }
 
     @Override
-    public void addLast(Item item){
+    public void addLast(T item){
         sentinel.prv.next = new IntNode(item, sentinel.prv, sentinel);
         sentinel.prv = sentinel.prv.next;
         this.size += 1;
@@ -70,11 +69,11 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     }
 
     @Override
-    public Item removeFirst(){
+    public T removeFirst(){
         if(sentinel.next == sentinel){
             return null;
         }
-        Item p = sentinel.next.item;
+        T p = sentinel.next.item;
         sentinel.next = sentinel.next.next;
         sentinel.next.prv = sentinel;
         size -= 1;
@@ -82,11 +81,11 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     }
 
     @Override
-    public Item removeLast(){
+    public T removeLast(){
         if(sentinel.next == sentinel){//檢查list是否為空
             return null;
         }
-        Item p = sentinel.prv.item;
+        T p = sentinel.prv.item;
         sentinel.prv = sentinel.prv.prv;
         sentinel.prv.next = sentinel;
         size -= 1;
@@ -94,7 +93,7 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     }
 
     @Override
-    public Item get(int index){
+    public T get(int index){
         IntNode p = sentinel.next;
         int current = 0;
         while(current < index){
@@ -107,14 +106,14 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
         return p.item;
     }
     //getRecursive必須要helper method
-    private Item getRecursive(int index){
+    T getRecursive(int index){
         if(index < size && index >= 0){
             return getRecursiveHelper(index, sentinel.next);
         }
         return null;
     }
 
-    public Item getRecursiveHelper(int index, IntNode p){
+    public T getRecursiveHelper(int index, IntNode p){
         if(index == 0){
             return p.item;
         }
@@ -122,11 +121,11 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
     }
 
 
-    public Iterator<Item> iterator(){
-        return null;
+    public Iterator<T> iterator(){
+        return new LinkedListDequeIterator();
     }
 
-    private class LinkedListDequeIterator implements Iterator<Item>{
+    private class LinkedListDequeIterator implements Iterator<T>{
         int curpos;
         LinkedListDequeIterator(){
             curpos = 0;
@@ -134,15 +133,15 @@ public class LinkedListDeque<Item> implements Deque<Item>, Iterable<Item>{
 
         @Override
         public boolean hasNext() {
-            if(curpos > size){
+            if(curpos >= size){
                 return false;
             }
             return true;
         }
 
         @Override
-        public Item next(){
-            Item curItem = get(curpos);
+        public T next(){
+            T curItem = get(curpos);
             curpos ++;
             return curItem;
         }
