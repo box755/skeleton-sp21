@@ -33,14 +33,18 @@ public class TestArrayDequeEC {
             }
             // removeFirst
             else if (operationNum == 2) {
-
+                if (buggyDeque.isEmpty()) {
+                    continue;
+                }
                 Integer removedBuggy = buggyDeque.removeFirst();
                 Integer removedCorrect = correctDeque.removeFirst();
                 assertEquals("removeFirst()", removedCorrect, removedBuggy);
             }
             // removeLast
             else if (operationNum == 3) {
-
+                if (buggyDeque.isEmpty()) {
+                    continue;
+                }
                 Integer removedBuggy = buggyDeque.removeLast();
                 Integer removedCorrect = correctDeque.removeLast();
                 assertEquals("removeLast()", removedCorrect, removedBuggy);
