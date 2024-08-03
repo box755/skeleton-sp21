@@ -2,32 +2,32 @@ package deque;
 
 import java.util.Iterator;
 
-public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
-    private Item[] items;
+public class ArrayDeque<T> implements Deque<T>, Iterable<T>{
+    private T[] items;
     private int size;
 
     public ArrayDeque(){
-        items = (Item[]) new Object[8];
+        items = (T[]) new Object[8];
         size = 0;
     }
 
     public ArrayDeque(ArrayDeque other){
         this();
         for(int i=0; i<other.size; i++) {
-            this.items[i] = (Item)other.get(i);
+            this.items[i] = (T)other.get(i);
             size += 1;
         }
     }
 
     public void resize(int capacity){
-        Item[] a = (Item[]) new Object[capacity];
+        T[] a = (T[]) new Object[capacity];
         for(int i=0; i<size; i++){
             a[i] = items[i];
         }
         items = a;
     }
 
-    public Item getLast(){
+    public T getLast(){
         if(size == 0){
             return null;
         }
@@ -35,21 +35,21 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
     }
 
     @Override
-    public Item get(int index){
+    public T get(int index){
         return this.items[index];
     }
 
     @Override
-    public void addFirst(Item item){
+    public void addFirst(T item){
         if(size == items.length){
-            Item[] newArray = (Item[]) new Object[size*2];
+            T[] newArray = (T[]) new Object[size*2];
             System.arraycopy(items, 0, newArray, 1, items.length-1);
             newArray[0] = item;
             items = newArray;
             size++;
             return;
         }
-        Item[] newArray = (Item[]) new Object[items.length];
+        T[] newArray = (T[]) new Object[items.length];
         System.arraycopy(items, 0, newArray, 1, items.length-1);
         newArray[0] = item;
         items = newArray;
@@ -58,7 +58,7 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
 
     // 如果新加入的元素讓陣列超過大小 resize 然後再加入最後一個元素
     @Override
-    public void addLast(Item item){
+    public void addLast(T item){
         if(size == items.length){
             resize(size * 2);
         }
@@ -68,14 +68,14 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
 
     //如果現現在陣列大小太大 resize成size大小 然後刪除元素再回傳
     @Override
-    public Item removeLast(){
+    public T removeLast(){
         if(size == 0){
             return null;
         }
         if(size < items.length/4 && size > 4){
             resize(size);
         }
-        Item p = items[size - 1];
+        T p = items[size - 1];
         items[size - 1] = null;
         size -= 1;
         return p;
@@ -83,16 +83,16 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
 
     //檢查陣列大小是否太大 然後複製一個新的陣列 把舊的除了第一個複製過去 再把最後一個設成null
     @Override
-    public Item removeFirst(){
+    public T removeFirst(){
         if(size == 0){
             return null;
         }
         if(size < items.length/4 && size > 4){
             resize(size);
         }
-        Item item = items[0];
+        T item = items[0];
 
-        Item[] newArray = (Item[]) new Object[items.length];
+        T[] newArray = (T[]) new Object[items.length];
         System.arraycopy(items, 1, newArray,0,  items.length - 1);
         items = newArray;
         items[size - 1] = null;
@@ -118,13 +118,13 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
 
     //iterator方法implement 因為ArrayDeque有immplement Iterable類別
     @Override
-    public Iterator<Item> iterator(){
+    public Iterator<T> iterator(){
         return new ArrayDequeIterator();
     }
 
 
     //ipmlement Iterator interface的hasNext和Next方法
-    private class ArrayDequeIterator implements Iterator<Item>{
+    private class ArrayDequeIterator implements Iterator<T>{
         int curpos;
         ArrayDequeIterator(){
             curpos = 0;
@@ -134,8 +134,8 @@ public class ArrayDeque<Item> implements Deque<Item>, Iterable<Item>{
             return curpos < size;
         }
         @Override
-        public Item next(){
-            Item curItem = items[curpos];
+        public T next(){
+            T curItem = items[curpos];
             curpos ++;
             return curItem;
         }
