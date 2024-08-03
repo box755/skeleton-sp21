@@ -33,7 +33,7 @@ public class TestArrayDequeEC {
             }
             // removeFirst
             else if (operationNum == 2) {
-                if (buggyDeque.isEmpty()) {
+                if (correctDeque.isEmpty() || buggyDeque.isEmpty()) {
                     continue;
                 }
                 Integer removedBuggy = buggyDeque.removeFirst();
@@ -42,7 +42,7 @@ public class TestArrayDequeEC {
             }
             // removeLast
             else if (operationNum == 3) {
-                if (buggyDeque.isEmpty()) {
+                if (correctDeque.isEmpty() || buggyDeque.isEmpty()) {
                     continue;
                 }
                 Integer removedBuggy = buggyDeque.removeLast();
