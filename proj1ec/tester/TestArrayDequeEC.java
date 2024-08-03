@@ -8,10 +8,14 @@ import student.StudentArrayDeque;
 import java.util.ArrayDeque;
 
 public class TestArrayDequeEC {
+
+
     @Test
     public void randomizeTest() {
         StudentArrayDeque<Integer> buggyDeque = new StudentArrayDeque<>();
         ArrayDeque<Integer> correctDeque = new ArrayDeque<>();
+
+        StringBuilder sequence = new StringBuilder();
 
         int N = 200;
 
@@ -22,32 +26,36 @@ public class TestArrayDequeEC {
                 int number = StdRandom.uniform(0, 100);
                 correctDeque.addFirst(number);
                 buggyDeque.addFirst(number);
-                assertEquals("addFirst(" + number + ")", correctDeque.size(), buggyDeque.size());
+                sequence.append("addFirst(").append(number).append(")\n");
+                assertEquals(sequence.toString(), correctDeque.size(), buggyDeque.size());
             }
             // addLast
             else if (operationNum == 1) {
                 int number = StdRandom.uniform(0, 100);
                 correctDeque.addLast(number);
                 buggyDeque.addLast(number);
-                assertEquals("addLast(" + number + ")", correctDeque.size(), buggyDeque.size());
+                sequence.append("addLast(").append(number).append(")\n");
+                assertEquals(sequence.toString(), correctDeque.size(), buggyDeque.size());
             }
             // removeFirst
             else if (operationNum == 2) {
                 if (correctDeque.isEmpty() || buggyDeque.isEmpty()) {
                     continue;
                 }
-                Integer removedBuggy = buggyDeque.removeFirst();
                 Integer removedCorrect = correctDeque.removeFirst();
-                assertEquals("removeFirst()", removedCorrect, removedBuggy);
+                Integer removedBuggy = buggyDeque.removeFirst();
+                sequence.append("removeFirst()\n");
+                assertEquals(sequence.toString(), removedCorrect, removedBuggy);
             }
             // removeLast
             else if (operationNum == 3) {
                 if (correctDeque.isEmpty() || buggyDeque.isEmpty()) {
                     continue;
                 }
-                Integer removedBuggy = buggyDeque.removeLast();
                 Integer removedCorrect = correctDeque.removeLast();
-                assertEquals("removeLast()", removedCorrect, removedBuggy);
+                Integer removedBuggy = buggyDeque.removeLast();
+                sequence.append("removeLast()\n");
+                assertEquals(sequence.toString(), removedCorrect, removedBuggy);
             }
         }
     }
