@@ -123,6 +123,55 @@ public class ArrayDequeTest {
         assertTrue(deque.equals(dequeCopy));
     }
 
+    @Test
+    public void randomTest() {
+        ArrayDeque<Integer> buggyDeque = new ArrayDeque<>();
+        java.util.ArrayDeque<Integer> correctDeque = new java.util.ArrayDeque<>();
+
+        StringBuilder sequence = new StringBuilder();
+
+        int N = 500;
+
+        for (int i = 0; i < N; i++) {
+            int operationNum = StdRandom.uniform(0, 4);
+            // addFirst
+            if (operationNum == 0) {
+                int number = StdRandom.uniform(0, 100);
+                correctDeque.addFirst(number);
+                buggyDeque.addFirst(number);
+                sequence.append("addFirst(").append(number).append(")\n");
+                assertEquals(sequence.toString(), correctDeque.size(), buggyDeque.size());
+            }
+            // addLast
+            else if (operationNum == 1) {
+                int number = StdRandom.uniform(0, 100);
+                correctDeque.addLast(number);
+                buggyDeque.addLast(number);
+                sequence.append("addLast(").append(number).append(")\n");
+                assertEquals(sequence.toString(), correctDeque.size(), buggyDeque.size());
+            }
+            // removeFirst
+            else if (operationNum == 2) {
+                if (correctDeque.isEmpty() || buggyDeque.isEmpty()) {
+                    continue;
+                }
+                Integer correctValue = correctDeque.removeFirst();
+                Integer buggyValue = buggyDeque.removeFirst();
+                sequence.append("removeFirst()\n");
+                assertEquals(sequence.toString(), correctValue, buggyValue);
+            }
+            // removeLast
+            else if (operationNum == 3) {
+                if (correctDeque.isEmpty() || buggyDeque.isEmpty()) {
+                    continue;
+                }
+                Integer correctValue = correctDeque.removeLast();
+                Integer buggyValue = buggyDeque.removeLast();
+                sequence.append("removeLast()\n");
+                assertEquals(sequence.toString(), correctValue, buggyValue);
+            }
+        }
+    }
 
 
 }
