@@ -25,11 +25,11 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
         this.size = 0;
     }
 
-    public LinkedListDeque(LinkedListDeque other){
+    public LinkedListDeque(LinkedListDeque<T> other){
         this();
         int current = 0;
         while(current < other.size()){
-            this.addLast((T)other.get(current));//這裡要轉型，因為我們給的參數other的型別是LinkedListDeque，但這個型別並沒有泛型，所以我們要給它。
+            this.addLast(other.get(current));
             current += 1;
         }
     }
@@ -106,7 +106,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
         return p.item;
     }
     //getRecursive必須要helper method
-    T getRecursive(int index){
+    public T getRecursive(int index){
         if(index < size && index >= 0){
             return getRecursiveHelper(index, sentinel.next);
         }
