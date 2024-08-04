@@ -25,19 +25,19 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
         this.size = 0;
     }
 
-    public LinkedListDeque(LinkedListDeque<T> other){
-        this();
-        int current = 0;
-        while(current < other.size()){
-            this.addLast(other.get(current));
-            current += 1;
-        }
-    }
-
-    public LinkedListDeque(T item){
-        this();
-        addLast(item);
-    }
+//    public LinkedListDeque(LinkedListDeque<T> other){
+//        this();
+//        int current = 0;
+//        while(current < other.size()){
+//            this.addLast(other.get(current));
+//            current += 1;
+//        }
+//    }
+//
+//    public LinkedListDeque(T item){
+//        this();
+//        addLast(item);
+//    }
 
     @Override
     public void addFirst(T item){
@@ -113,7 +113,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T>{
         return null;
     }
 
-    public T getRecursiveHelper(int index, IntNode p){
+    private T getRecursiveHelper(int index, IntNode p){
         if(index == 0){
             return p.item;
         }

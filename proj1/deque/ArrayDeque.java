@@ -11,28 +11,26 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T>{
         size = 0;
     }
 
-    public ArrayDeque(ArrayDeque other){
-        this();
-        for(int i=0; i<other.size; i++) {
-            this.items[i] = (T)other.get(i);
-            size += 1;
-        }
-    }
+//    public ArrayDeque(ArrayDeque other){
+//        this();
+//        for(int i=0; i<other.size; i++) {
+//            this.items[i] = (T)other.get(i);
+//            size += 1;
+//        }
+//    }
 
-    public void resize(int capacity){
+    private void resize(int capacity){
         T[] a = (T[]) new Object[capacity];
-        for(int i=0; i<size; i++){
-            a[i] = items[i];
-        }
+        System.arraycopy(items, 0, a, 0, size);
         items = a;
     }
 
-    public T getLast(){
-        if(size == 0){
-            return null;
-        }
-        return this.items[size - 1];
-    }
+//    public T getLast(){
+//        if(size == 0){
+//            return null;
+//        }
+//        return this.items[size - 1];
+//    }
 
     @Override
     public T get(int index){
