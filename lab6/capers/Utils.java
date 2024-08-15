@@ -74,8 +74,7 @@ class Utils {
 
     /** Return an object of type T read from FILE, casting it to EXPECTEDCLASS.
      *  Throws IllegalArgumentException in case of problems. */
-    static <T extends Serializable> T readObject(File file,
-                                                 Class<T> expectedClass) {
+    static <T extends Serializable> T readObject(File file, Class<T> expectedClass) {
         try {
             ObjectInputStream in =
                     new ObjectInputStream(new FileInputStream(file));
@@ -99,6 +98,7 @@ class Utils {
     /** Return the concatentation of FIRST and OTHERS into a File designator,
      *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
      *  method. */
+    //join函數用paths.get把字串形式的地址轉成path(interface)，再call path物件的toFile()方法。
     static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
     }
