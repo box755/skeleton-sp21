@@ -63,10 +63,14 @@ public class TestBSTMapExtra {
         q.put("b","a");
         q.put("a","a");
         q.put("d","a");
-        q.put("e","a");                         // a b c d e
+        q.put("e","a");
+        q.printInOrder();
+// a b c d e
         assertTrue(null != q.remove("e"));      // a b c d
         assertTrue(q.containsKey("a"));
         assertTrue(q.containsKey("b"));
+        System.out.println(q.containsKey("c"));
+        q.printInOrder();
         assertTrue(q.containsKey("c"));
         assertTrue(q.containsKey("d"));
         assertTrue(null != q.remove("c"));      // a b d
@@ -111,6 +115,29 @@ public class TestBSTMapExtra {
         assertTrue(((Integer) noChild.remove('Z')).equals(15));
         assertEquals(0, noChild.size());
         assertEquals(null, noChild.get('Z'));
+    }
+
+    @Test
+    public void testtt(){
+        BSTMap<String, String> q = new BSTMap<>();
+        q.put("c","a");
+        q.put("b","a");
+        q.put("a","a");
+        q.put("d","a");
+        q.put("e","a");
+        q.printInOrder();
+        System.out.println("After remove: ");
+        String deleted = q.remove("c");
+        q.printInOrder();
+        System.out.println(q.containsKey("a"));
+        System.out.println(q.containsKey("b"));
+        System.out.println(q.containsKey("c"));
+        System.out.println(q.containsKey("d"));
+        System.out.println(q.containsKey("e"));
+
+
+
+
     }
 
 }
