@@ -44,7 +44,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return containsKey(root, key);
     }
 
-    public boolean containsKey(BSTNode node, K key){
+    private boolean containsKey(BSTNode node, K key){
         if(node == null){
             return false;
         }
@@ -154,7 +154,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         throw new UnsupportedOperationException();
     }
 
-    public void delete(K key){
+    private void delete(K key){
         if(key == null){
             throw new IllegalArgumentException("Delete() call's key can't be null!!!!!!");
         }
