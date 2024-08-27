@@ -125,15 +125,9 @@ public class TestBSTMapExtra {
         q.put("a","a");
         q.put("d","a");
         q.put("e","a");
-        q.printInOrder();
-        System.out.println("After remove: ");
-        String deleted = q.remove("c");
-        q.printInOrder();
-        System.out.println(q.containsKey("a"));
-        System.out.println(q.containsKey("b"));
-        System.out.println(q.containsKey("c"));
-        System.out.println(q.containsKey("d"));
-        System.out.println(q.containsKey("e"));
+        for(String key : q){
+            System.out.println(key);
+        }
 
 
 

@@ -4,8 +4,9 @@ import edu.princeton.cs.algs4.BST;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Stack;
 
-public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterable<K>{
 //內部類（BSTNode）用private外部類還是可以存取，JAVA的規定。
     private class BSTNode{
         private K key;
@@ -151,7 +152,36 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new keyIterator();
+    }
+
+    private class keyIterator implements Iterator<K>{
+        private Stack<K> keys;
+        public keyIterator(){
+            keys = new Stack<>();
+            pushKeys(root, keys);
+        }
+
+        private void pushKeys(BSTNode node, Stack<K> keys){
+            if(node == null){
+                return;
+            }
+            pushKeys(node.left, keys);
+            keys.push(node.key);
+            pushKeys(node.right, keys);
+        }
+
+        public boolean hasNext() {
+            if(keys.isEmpty()){
+                return false;
+            }
+            return true;
+        }
+
+        public K next(){
+            K key = keys.pop();
+            return key;
+        }
     }
 
     private void delete(K key){
@@ -209,6 +239,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     public void printInOrder(){
         printInOrder(root);
     }
+
     private void printInOrder(BSTNode node){
         if(node == null){
             return;
