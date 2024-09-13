@@ -9,7 +9,7 @@ import java.util.*;
  *  Assumes null keys will never be inserted, and does not resize down upon remove().
  *  @author YOUR NAME HERE
  */
-public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
+public class MyHashMap<K, V> implements Map61B<K, V> {
     private double loadFactor;
     //key-value pairs.
     private int size;
@@ -27,23 +27,7 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
             key = k;
             value = v;
         }
-        @Override
-        public boolean equals(Object o){
-            if(o == null){
-                return false;
-            }
-            if(o == this){
-                return true;
-            }
-            if(o.getClass() != this.getClass()){
-                return false;
-            }
 
-            Node node = (Node)o;
-
-            return (node.key == key) && (node.value == value);
-
-        }
     }
 
     private void resize(int bucketsSize){
@@ -103,7 +87,15 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
     public V remove(K key){
         int keyHash = Math.floorMod(key.hashCode(), arraySize);
         V removedValue = get(key);
-        buckets[keyHash].remove(createNode(key, removedValue));
+        //也可以在Node類別中，加入equals方法，再用buckets裡的物件的remove方法（會比對每個物件是否相同後刪除）。
+        Iterator<Node> iterator = buckets[keyHash].iterator();
+        while(iterator.hasNext()){
+            Node node = iterator.next();
+            if(node.key.equals(key)){
+                iterator.remove();
+                //iterator<> default void remove()會把當前指向的節點刪除
+            }
+        }
         size--;
         return removedValue;
     }
@@ -113,8 +105,14 @@ public class MyHashMap<K, V> implements Map61B<K, V>, Iterable<K> {
         int keyHash = Math.floorMod(key.hashCode(), arraySize);
         V removedValue = get(key);
         if(removedValue == value){
-            buckets[keyHash].remove(createNode(key, removedValue));
-            size--;
+            Iterator<Node> iterator = buckets[keyHash].iterator();
+            while(iterator.hasNext()){
+                Node node = iterator.next();
+                if(node.key.equals(key)){
+                    iterator.remove();
+                    //iterator<> default void remove()會把當前指向的節點刪除
+                }
+            }
             return removedValue;
         }
         else{
