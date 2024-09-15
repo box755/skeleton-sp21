@@ -47,13 +47,19 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     private String hash;
 
+    private SimpleDateFormat formater = new SimpleDateFormat("EEE MMM d HH:mm:ss Z");
+
     public Commit(String parentHash, String message, Map<String, String> files) throws Exception{
-        SimpleDateFormat formater = new SimpleDateFormat("EEE MMM d HH:mm:ss Z");
         this.message = message;
         this.timeStamp = formater.format(new Date());
         this.parentHash = parentHash;
         this.files = files;
         this.hash = SHA1();
+    }
+
+    public Commit(String parentHash, String message, Map<String, String> files, Date date) throws Exception{
+        this(parentHash, message, files);
+        this.timeStamp = formater.format(date);
     }
 
     public String getDate(){

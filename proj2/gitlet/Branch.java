@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 
 import static gitlet.Utils.*;
@@ -19,7 +20,7 @@ public class Branch implements Serializable {
     }
 
     public static void setBranch() throws Exception{
-        Commit initialCommit = new Commit(null, "Initial commit", new HashMap<>());
+        Commit initialCommit = new Commit(null, "Initial commit", new HashMap<>(), new Date(0));
         Branch masterBranch = new Branch("Master");
         masterBranch.setHeadByCommitObj(initialCommit);
         Repository.setHEADByBranchName(masterBranch.getName());
