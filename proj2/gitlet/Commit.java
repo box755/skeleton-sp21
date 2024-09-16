@@ -139,7 +139,7 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     @Override
     public String toString(){
-        return "commit " + hash + "\n" + "date " + formater.format(timeStamp) + "\n" + message;
+        return "commit " + hash + "\n" + "Date: " + formater.format(timeStamp) + "\n" + message;
     }
 
     @Override
