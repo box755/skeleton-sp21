@@ -13,14 +13,14 @@ public class Branch implements Serializable {
 
     public static final File BRANCH_DIR = join(Repository.GITLET_DIR, "branches");
 
-    private String name;
+    private final String name;
     private String head;
     public Branch(String name){
         this.name = name;
     }
 
     public static void setBranch() throws Exception{
-        Commit initialCommit = new Commit(null, "Initial commit", new HashMap<>(), new Date(0));
+        Commit initialCommit = new Commit(null, "initial commit", new HashMap<>(), new Date(0));
         Branch masterBranch = new Branch("Master");
         masterBranch.setHeadByCommitObj(initialCommit);
         Repository.setHEADByBranchName(masterBranch.getName());

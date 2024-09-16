@@ -198,8 +198,8 @@ public class Repository {
         }
         Collections.sort(commits);
         for(Commit commit : commits){
-            System.out.println(commit);
             System.out.println("===");
+            System.out.println(commit);
         }
     }
 

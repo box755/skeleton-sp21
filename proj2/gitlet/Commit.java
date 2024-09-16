@@ -37,21 +37,21 @@ public class Commit implements Serializable, Comparable<Commit> {
      * variable is used. We've provided one example for `message`.
      */
 
-    private String timeStamp;
+    private Date timeStamp;
     /** The message of this Commit. */
-    private String message;
+    private final String message;
 
     private String parentHash;
 
-    private Map<String, String> files;
+    private final Map<String, String> files;
 
     private String hash;
 
-    private SimpleDateFormat formater = new SimpleDateFormat("EEE MMM d HH:mm:ss Z");
+    private final SimpleDateFormat formater = new SimpleDateFormat("EEE MMM d HH:mm:ss yyy Z");
 
     public Commit(String parentHash, String message, Map<String, String> files) throws Exception{
         this.message = message;
-        this.timeStamp = formater.format(new Date());
+        this.timeStamp = new Date();
         this.parentHash = parentHash;
         this.files = files;
         this.hash = SHA1();
@@ -59,10 +59,10 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     public Commit(String parentHash, String message, Map<String, String> files, Date date) throws Exception{
         this(parentHash, message, files);
-        this.timeStamp = formater.format(date);
+        this.timeStamp = date;
     }
 
-    public String getDate(){
+    public Date getDate(){
         return this.timeStamp;
     }
 
@@ -139,7 +139,7 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     @Override
     public String toString(){
-        return "commit " + hash + "\n" + "date " + timeStamp + "\n" + message;
+        return "commit " + hash + "\n" + "date " + formater.format(timeStamp) + "\n" + message;
     }
 
     @Override

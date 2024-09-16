@@ -12,7 +12,7 @@ public class Blob implements Serializable {
     public static final File BLOB_DIR = join(Repository.GITLET_DIR, "blobs");
 
     private String hash;
-    private String content;
+    private final String content;
     public Blob(String content){
         if(content == null){
             throw new IllegalArgumentException("Content can not be null");

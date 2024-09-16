@@ -14,7 +14,7 @@ public class Stage implements Serializable {
 
     public static final File STAGEFILE = join(Repository.GITLET_DIR, "stage");
 
-    private Map<String, String> filesChanged;
+    private final Map<String, String> filesChanged;
 
     public Stage() {
         this.filesChanged = new HashMap<>();
