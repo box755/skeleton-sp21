@@ -9,10 +9,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date; // TODO: You'll likely use this in this class
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static gitlet.Utils.join;
 import static gitlet.Utils.readObject;
@@ -122,12 +119,17 @@ public class Commit implements Serializable, Comparable<Commit> {
     public void updateCommit(String parentHash, Stage stageUpdated){
         //更新parentHash
         this.parentHash = parentHash;
-        //更新files
-        Map<String, String> fileToCommit = stageUpdated.getFilesChanged();
-        for(Map.Entry<String, String> entry : fileToCommit.entrySet()){
+        //要更改的files
+        Map<String, String> filesToChange = stageUpdated.getFilesChanged();
+        //要刪除的files
+        List<String> filesToRemove = stageUpdated.getFilesRemoved();
+        for(Map.Entry<String, String> entry : filesToChange.entrySet()){
             String fileName = entry.getKey();
             String blobHash = entry.getValue();
             files.put(fileName, blobHash);
+        }
+        for(String fileNameToRemove : filesToRemove){
+            files.remove(fileNameToRemove);
         }
         //更新hash
         try{

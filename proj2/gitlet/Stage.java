@@ -2,6 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import static gitlet.Utils.*;
@@ -14,14 +15,12 @@ public class Stage implements Serializable {
 
     public static final File STAGEFILE = join(Repository.GITLET_DIR, "stage");
 
-    private final Map<String, String> filesChanged;
+    private Map<String, String> filesChanged;
+    private ArrayList<String> filesRemoved;
 
     public Stage() {
         this.filesChanged = new HashMap<>();
-    }
-
-    public void addStage(String fileName, String blobName) {
-        filesChanged.put(fileName, blobName);
+        this.filesRemoved = new ArrayList<>();
     }
 
     public static void setStage() {
@@ -29,6 +28,12 @@ public class Stage implements Serializable {
         Utils.writeObject(STAGEFILE, initialStage);
     }
 
+    public void addRemovedFile(String fileName){
+        if(filesChanged.containsKey(fileName)){
+            filesChanged.remove(fileName);
+        }
+        filesRemoved.add(fileName);
+    }
     public void updateStage(String fileName) {
         // 獲取當前branch，並獲取其head commit的檔案
         //Branch currentBranch = Utils.readObject(join(Branch.BRANCH_DIR, "Master"), Branch.class);
@@ -62,10 +67,15 @@ public class Stage implements Serializable {
         return filesChanged;
     }
 
+    public ArrayList<String> getFilesRemoved(){
+        return filesRemoved;
+    }
+
     public static Stage getStage(){
         return readObject(STAGEFILE, Stage.class);
     }
     public void clear() {
         filesChanged.clear();
+        filesRemoved.clear();
     }
 }

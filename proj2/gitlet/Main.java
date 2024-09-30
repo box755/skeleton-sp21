@@ -24,7 +24,8 @@ public class Main {
                 break;
             case "add":
                 validateNumArgs(args, 2);
-                Repository.add(args[1]);
+                String fileToAddName = args[1];
+                Repository.add(fileToAddName);
                 // TODO: handle the `add [filename]` command
                 break;
             case "commit":
@@ -39,19 +40,24 @@ public class Main {
                     Repository.checkOutBranch(branchName);
                 }
                 else if(args.length == 3){
-                    String fileName = args[2];
-                    Repository.checkOutFile(fileName);
+                    String fileToCheckName = args[2];
+                    Repository.checkOutFile(fileToCheckName);
                 }
                 else if(args.length == 4) {
                     String commitId = args[1];
-                    String fileName = args[3];
-                    Repository.checkOutCommit(commitId, fileName);
+                    String fileToCheckName = args[3];
+                    Repository.checkOutCommit(commitId, fileToCheckName);
                 }
                 break;
             case "log":
                 validateNumArgs(args, 1);
                 Repository.log();
                 break;
+            case "rm":
+                validateNumArgs(args, 2);
+                String fileToRemoveName = args[1];
+                Repository.rm(fileToRemoveName);
+
                 // TODO: FILL THE REST IN
         }
     }

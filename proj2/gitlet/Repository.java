@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import static gitlet.Utils.*;
@@ -75,20 +76,36 @@ public class Repository {
     }
 
 
-    public static void add(String NameOfFileToBeCheck){
-        if(!join(CWD, NameOfFileToBeCheck).exists()){
+    public static void add(String NameOfFileToStage){
+        if(!join(CWD, NameOfFileToStage).exists()){
             System.out.println("File does not exist.");
             System.exit(0);
         }
-        Stage currenStage = new Stage();
-        currenStage.updateStage(NameOfFileToBeCheck);          //更新stage的狀態。
-        Utils.writeObject(Stage.STAGEFILE, currenStage);       //更新後的stage存到stage檔案中。
+        Stage currenStage = Stage.getStage();
+        currenStage.updateStage(NameOfFileToStage);          //更新stage的狀態。
+        currenStage.saveStage();                                   //更新後的stage存到stage檔案中。
+    }
+
+    public static void rm(String fileToBeRemoveName){
+        Branch currBranch = getHEADBranchFromFile();
+        Commit currHeadCommit = Commit.getCommitByHash(currBranch.getHead());
+        Stage currStage = Stage.getStage();
+        if(!currHeadCommit.getFiles().containsKey(fileToBeRemoveName) && !currStage.getFilesChanged().containsKey(fileToBeRemoveName)){
+            System.out.println("No reason to remove the file.");
+            System.exit(0);
+        }
+        if(currHeadCommit.getFiles().containsKey(fileToBeRemoveName)){
+            File fileToRemove = join(CWD, fileToBeRemoveName);
+            fileToRemove.delete();
+        }
+        currStage.addRemovedFile(fileToBeRemoveName);
+        currStage.saveStage();
     }
 
     public static void commit(String massage){
         //讀取stage
         Stage currStage = Stage.getStage();
-        if(currStage.getFilesChanged().isEmpty()){
+        if(currStage.getFilesChanged().isEmpty() && currStage.getFilesRemoved().isEmpty()){
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
@@ -201,5 +218,7 @@ public class Repository {
             System.out.println(commit);
         }
     }
+
+
 
 }
