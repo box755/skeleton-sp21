@@ -40,6 +40,8 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     private String parentHash;
 
+    private String otherParentHash;
+
     private final Map<String, String> files;
 
     private String hash;
@@ -50,6 +52,7 @@ public class Commit implements Serializable, Comparable<Commit> {
         this.message = message;
         this.timeStamp = new Date();
         this.parentHash = parentHash;
+        this.otherParentHash = null;
         this.files = files;
         this.hash = SHA1();
     }
@@ -59,7 +62,13 @@ public class Commit implements Serializable, Comparable<Commit> {
         this.timeStamp = date;
     }
 
-    public Date getDate(){
+    public Commit(String parentHash, String otherParentHash, String message, Map<String, String> files) throws Exception{
+        this(parentHash, message, files);
+        this.otherParentHash = otherParentHash;
+    }
+
+
+        public Date getDate(){
         return this.timeStamp;
     }
 
@@ -73,6 +82,10 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     public String getHash(){
         return this.hash;
+    }
+
+    public Map<String, String> getFiles(){
+        return this.files;
     }
 
     private String SHA1() throws Exception {
@@ -104,11 +117,10 @@ public class Commit implements Serializable, Comparable<Commit> {
         Utils.writeObject(commitFile, this);
     }
 
-    public Map<String, String> getFiles(){
-            return this.files;
-    }
-
     public static Commit getCommitByHash(String commitHash){
+        if(commitHash == null){
+            return null;
+        }
         File commitFile = join(COMMIT_DIR, commitHash);
         if(!commitFile.exists()){
             return null;
@@ -122,7 +134,7 @@ public class Commit implements Serializable, Comparable<Commit> {
         //要更改的files
         Map<String, String> filesToChange = stageUpdated.getFilesChanged();
         //要刪除的files
-        List<String> filesToRemove = stageUpdated.getFilesRemoved();
+        Set<String> filesToRemove = stageUpdated.getFilesRemoved();
         for(Map.Entry<String, String> entry : filesToChange.entrySet()){
             String fileName = entry.getKey();
             String blobHash = entry.getValue();
@@ -141,6 +153,9 @@ public class Commit implements Serializable, Comparable<Commit> {
 
     @Override
     public String toString(){
+        if(otherParentHash != null){
+            return "===\ncommit " + hash + "\n" + "Merge: " + parentHash.substring(0,7) + " " + otherParentHash.substring(0, 7) + "\n" + "Date: " + formater.format(timeStamp) + "\n" + message + "\n" ;
+        }
         return "===\ncommit " + hash + "\n" + "Date: " + formater.format(timeStamp) + "\n" + message + "\n";
     }
 

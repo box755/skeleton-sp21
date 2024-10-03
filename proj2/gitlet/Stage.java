@@ -2,9 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import static gitlet.Utils.*;
 
 public class Stage implements Serializable {
@@ -16,11 +14,11 @@ public class Stage implements Serializable {
     public static final File STAGEFILE = join(Repository.GITLET_DIR, "stage");
 
     private Map<String, String> filesChanged;
-    private ArrayList<String> filesRemoved;
+    private Set<String> filesRemoved;
 
     public Stage() {
         this.filesChanged = new HashMap<>();
-        this.filesRemoved = new ArrayList<>();
+        this.filesRemoved = new HashSet<>();
     }
 
     public static void setStage() {
@@ -57,6 +55,9 @@ public class Stage implements Serializable {
         if (!headFiles.containsKey(fileName) || !headFiles.get(fileName).equals(newBlob.getHash())) {
             filesChanged.put(fileName, newBlob.getHash());
         }
+        else{
+            filesChanged.remove(fileName);
+        }
     }
 
     public void saveStage(){
@@ -67,13 +68,14 @@ public class Stage implements Serializable {
         return filesChanged;
     }
 
-    public ArrayList<String> getFilesRemoved(){
+    public Set<String> getFilesRemoved(){
         return filesRemoved;
     }
 
     public static Stage getStage(){
         return readObject(STAGEFILE, Stage.class);
     }
+
     public void clear() {
         filesChanged.clear();
         filesRemoved.clear();

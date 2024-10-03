@@ -57,8 +57,40 @@ public class Main {
                 validateNumArgs(args, 2);
                 String fileToRemoveName = args[1];
                 Repository.rm(fileToRemoveName);
-
-                // TODO: FILL THE REST IN
+                break;
+            case "global-log" :
+                validateNumArgs(args, 1);
+                Repository.globalLog();
+                break;
+            case "find":
+                validateNumArgs(args, 2);
+                String message = args[1];
+                Repository.find(message);
+                break;
+            case "status":
+                validateNumArgs(args, 1);
+                Repository.status();
+                break;
+            case "branch":
+                validateNumArgs(args, 2);
+                String branchName = args[1];
+                Repository.branch(branchName);
+                break;
+            case "rm-branch":
+                validateNumArgs(args, 2);
+                String branchNameToRemove = args[1];
+                Repository.rmBranch(branchNameToRemove);
+                break;
+            case "reset":
+                validateNumArgs(args, 2);
+                String commitID = args[1];
+                Repository.reset(commitID);
+                break;
+            case "merge":
+                validateNumArgs(args, 2);
+                String branchNameToBeMerged = args[1];
+                Repository.merge(branchNameToBeMerged);
+                break;
         }
     }
 
