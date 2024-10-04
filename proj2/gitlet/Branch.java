@@ -23,7 +23,7 @@ public class Branch implements Serializable {
         //初始化initialCommit
         Commit initialCommit = new Commit(null, "initial commit", new HashMap<>(), new Date(0));
         //初始化預設branch: Master
-        Branch masterBranch = new Branch("Master");
+        Branch masterBranch = new Branch("master");
         //設定branch的head（最新commit）
         masterBranch.setHeadByCommitObj(initialCommit);
         //設定head指標
