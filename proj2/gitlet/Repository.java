@@ -421,32 +421,42 @@ public class Repository {
         else{
             boolean hasConflict = false;
 
-            // 開始合併文件
+            // 合併文件
             for (String fileName : plainFilenamesIn(CWD)) {
                 String headBlobHash = HEADBranchHead.getFiles().get(fileName);
                 String otherBlobHash = otherBranchHead.getFiles().get(fileName);
                 String splitBlobHash = splitPointCommit.getFiles().get(fileName);
 
-                // 根據三方差異決定如何處理文件
+                // Case: 文件只存在於給定分支，加入並stage
                 if (splitBlobHash == null && otherBlobHash != null && headBlobHash == null) {
-                    // Case: 只存在於給定分支的文件
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
-                } else if (splitBlobHash != null && otherBlobHash == null && headBlobHash != null) {
-                    // Case: 被刪除於給定分支
+                }
+                // Case: 文件在給定分支被刪除，從CWD刪除並加入removed files
+                else if (splitBlobHash != null && otherBlobHash == null && headBlobHash != null) {
                     join(CWD, fileName).delete();
                     currStage.addRemovedFile(fileName);
-                } else if (splitBlobHash == null && headBlobHash != null && otherBlobHash == null) {
-                    // Case: 當前分支有，給定分支沒有，保留當前分支文件
-                    continue;
-                } else if (splitBlobHash != null && headBlobHash.equals(splitBlobHash) && !otherBlobHash.equals(splitBlobHash)) {
-                    // Case: 文件在給定分支修改了，但當前分支沒修改
+                }
+                // Case: 當前分支沒有修改，給定分支有修改，使用給定分支的版本
+                else if (splitBlobHash != null && headBlobHash.equals(splitBlobHash) && !otherBlobHash.equals(splitBlobHash)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
-                } else if (headBlobHash != null && otherBlobHash != null && !headBlobHash.equals(otherBlobHash)) {
-                    // Case: 發生衝突，兩邊都修改了，處理衝突
+                }
+                // Case: 文件在兩邊有不同的修改，處理衝突
+                else if (headBlobHash != null && otherBlobHash != null && !headBlobHash.equals(otherBlobHash)) {
                     handleConflict(fileName, headBlobHash, otherBlobHash);
                     hasConflict = true;
+                }
+            }
+
+            // 處理新文件和文件刪除情況
+            for (String fileName : plainFilenamesIn(CWD)) {
+                if (!HEADBranchHead.getFiles().containsKey(fileName) && otherBranchHead.getFiles().containsKey(fileName)) {
+                    checkOutCertainFIle(otherBranchHead, fileName);
+                    currStage.updateStage(fileName);
+                } else if (HEADBranchHead.getFiles().containsKey(fileName) && !otherBranchHead.getFiles().containsKey(fileName)) {
+                    join(CWD, fileName).delete();
+                    currStage.addRemovedFile(fileName);
                 }
             }
             // 提交合併
@@ -531,7 +541,7 @@ public class Repository {
         String headContent = headBlob != null ? headBlob.getContent() : "";
         String otherContent = otherBlob != null ? otherBlob.getContent() : "";
 
-        String conflictContent = "<<<<<<< HEAD\n" + headContent + "=======\n" + otherContent + ">>>>>>>\n";
+        String conflictContent = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + otherContent + "\n>>>>>>>\n";
         writeContents(join(CWD, fileName), conflictContent);
 
         Stage.getStage().updateStage(fileName);
