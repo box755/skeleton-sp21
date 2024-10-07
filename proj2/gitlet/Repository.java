@@ -416,8 +416,7 @@ public class Repository {
         }
         else if(HEADBranch.getHead().equals(splitPointCommit.getHash())){
             System.out.println("Current branch fast-forwarded.");
-            HEADBranch.setHeadByCommitObj(otherBranchHead);
-            HEADBranch.saveBranch();
+            checkOutBranch(otherBranch.getName());
         }
         else{
             boolean hasConflict = false;
@@ -468,11 +467,18 @@ public class Repository {
     }
 
     private static Commit splitPointHash(Commit HEADBranchHead, Commit otherBranchHead){
-        while(!HEADBranchHead.getHash().equals(otherBranchHead.getHash())){
-            HEADBranchHead = Commit.getCommitByHash(HEADBranchHead.getParentHash());
-            otherBranchHead = Commit.getCommitByHash(otherBranchHead.getParentHash());
-        }
-        return HEADBranchHead;
+            Set<String> commitHistory = new HashSet<>();
+            while(HEADBranchHead != null){
+                commitHistory.add(HEADBranchHead.getHash());
+                HEADBranchHead = Commit.getCommitByHash(HEADBranchHead.getParentHash());
+            }
+            while(otherBranchHead != null){
+                if(commitHistory.contains(otherBranchHead.getHash())){
+                    return otherBranchHead;
+                }
+                otherBranchHead = Commit.getCommitByHash(otherBranchHead.getParentHash());
+            }
+            return null;
     }
 
     private static boolean willUntrackedFilesBeOverwritten(Commit currentCommit, Commit targetCommit) {
