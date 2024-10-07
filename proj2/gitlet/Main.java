@@ -41,9 +41,17 @@ public class Main {
                 }
                 else if(args.length == 3){
                     String fileToCheckName = args[2];
+                    if(!args[2].equals("--")){
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
                     Repository.checkOutFile(fileToCheckName);
                 }
                 else if(args.length == 4) {
+                    if(!args[3].equals("--")){
+                        System.out.println("Incorrect operands.");
+                        System.exit(0);
+                    }
                     String commitId = args[1];
                     String fileToCheckName = args[3];
                     Repository.checkOutCommit(commitId, fileToCheckName);
@@ -91,10 +99,17 @@ public class Main {
                 String branchNameToBeMerged = args[1];
                 Repository.merge(branchNameToBeMerged);
                 break;
+            default:
+                System.out.println("No command with that name exists.");
+                System.exit(0);
         }
     }
 
-    public static void validateNumArgs(String[] args, int ... n){
+    private static void validateNumArgs(String[] args, int ... n){
+        if(!args[0].equals("init") && !Repository.GITLET_DIR.exists()){
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
         for (int j : n) {
             if (args.length == j) {
                 return;
@@ -103,6 +118,7 @@ public class Main {
         System.out.println("Incorrect operands.");
         System.exit(0);
     }
+
 }
 
 

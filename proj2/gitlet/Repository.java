@@ -81,29 +81,50 @@ public class Repository {
         currenStage.saveStage();                                   //更新後的stage存到stage檔案中。
     }
 
-    public static void rm(String fileToBeRemoveName){
+    public static void rm(String fileToBeRemoveName) {
         Branch currBranch = getHEADBranchFromFile();
         Commit currHeadCommit = Commit.getCommitByHash(currBranch.getHead());
         Stage currStage = Stage.getStage();
-        if(!currHeadCommit.getFiles().containsKey(fileToBeRemoveName) && !currStage.getFilesChanged().containsKey(fileToBeRemoveName)){
+        File fileToRemove = join(CWD, fileToBeRemoveName);
+
+        // 1. 檢查檔案是否存在於當前提交或暫存區中
+        boolean isTrackedInCommit = currHeadCommit.getFiles().containsKey(fileToBeRemoveName);
+        boolean isStaged = currStage.getFilesChanged().containsKey(fileToBeRemoveName);
+
+        if (!isTrackedInCommit && !isStaged) {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
-        if(currHeadCommit.getFiles().containsKey(fileToBeRemoveName)){
-            File fileToRemove = join(CWD, fileToBeRemoveName);
-            fileToRemove.delete();
+
+        // 2. 如果檔案已經在提交中被追蹤，刪除檔案並標記為 "Removed"
+        if (isTrackedInCommit) {
+            if (fileToRemove.exists()) {
+                fileToRemove.delete();  // 刪除工作目錄中的檔案
+            }
+            currStage.addRemovedFile(fileToBeRemoveName);  // 標記為待刪除
         }
-        currStage.addRemovedFile(fileToBeRemoveName);
+
+        // 3. 如果檔案只是暫存區中的變更，從暫存區移除它
+        if (isStaged) {
+            currStage.getFilesChanged().remove(fileToBeRemoveName);  // 從暫存區中移除變更
+        }
+
+        // 4. 最後保存當前stage狀態
         currStage.saveStage();
     }
 
     public static void commit(String massage){
         //讀取stage
         Stage currStage = Stage.getStage();
-        if(currStage.getFilesChanged().isEmpty() && currStage.getFilesRemoved().isEmpty()){
+        if(massage.isEmpty()){
+            System.out.println("Please enter a commit massage.");
+            System.exit(0);
+        }
+        else if(currStage.getFilesChanged().isEmpty() && currStage.getFilesRemoved().isEmpty()){
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
+
         //讀取branch, parent的commit
         Branch currBranch = getHEADBranchFromFile();
         String parentHash = currBranch.getHead();
