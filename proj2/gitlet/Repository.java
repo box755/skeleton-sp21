@@ -227,7 +227,7 @@ public class Repository {
                 if (fullCommitHash != null) {
                     // 發現多個 ID
                     System.out.println("Ambiguous commit ID.");
-                    return null;
+                    return fullCommitHash;
                 }
                 fullCommitHash = hash;
             }
@@ -411,6 +411,7 @@ public class Repository {
             System.exit(0);
         }
         //更新HEAD branch的head commit
+        Stage currStage = Stage.getStage();
         Branch currBranch = getHEADBranchFromFile();
         Commit commitToBeChecked = Commit.getCommitByHash(commitID);
         currBranch.setHeadByCommitObj(commitToBeChecked);
@@ -418,9 +419,12 @@ public class Repository {
         for(String fileName : Utils.plainFilenamesIn(CWD)){
             checkOutCertainFIle(commitToCheckFrom, fileName);
         }
+        //清空暫存區
+        currStage.clear();
 
-        //儲存branch
 
+        //儲存branch stage
+        currStage.saveStage();
         currBranch.saveBranch();
 
     }
