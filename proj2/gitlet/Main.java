@@ -40,8 +40,8 @@ public class Main {
                     Repository.checkOutBranch(branchName);
                 }
                 else if(args.length == 3){
-                    String fileToCheckName = args[1];
-                    if(!args[2].equals("--")){
+                    String fileToCheckName = args[2];
+                    if(!args[1].equals("--")){
                         System.out.println("Incorrect operands.");
                         System.exit(0);
                     }

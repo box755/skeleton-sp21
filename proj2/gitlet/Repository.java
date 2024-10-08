@@ -310,11 +310,14 @@ public class Repository {
 
         System.out.println("=== Modifications Not Staged For Commit ===");
         for(String fileName : headCommit.getFiles().keySet()){
+            boolean isFileRemoved = currStage.getFilesRemoved().contains(fileName);
             boolean isFileStaged = currStage.getFilesChanged().containsKey(fileName);
             boolean isFileExist = join(CWD, fileName).exists();
-
+            //檔案不存在時，可能是被手動刪除，也可能是被rm
             if(!isFileExist){
-                System.out.println(fileName + " (deleted)");
+                if(!isFileRemoved){
+                    System.out.println(fileName + " (deleted)");
+                }
                 continue;
             }
 
