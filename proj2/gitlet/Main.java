@@ -40,7 +40,7 @@ public class Main {
                     Repository.checkOutBranch(branchName);
                 }
                 else if(args.length == 3){
-                    String fileToCheckName = args[2];
+                    String fileToCheckName = args[1];
                     if(!args[2].equals("--")){
                         System.out.println("Incorrect operands.");
                         System.exit(0);
@@ -48,7 +48,7 @@ public class Main {
                     Repository.checkOutFile(fileToCheckName);
                 }
                 else if(args.length == 4) {
-                    if(!args[3].equals("--")){
+                    if(!args[2].equals("--")){
                         System.out.println("Incorrect operands.");
                         System.exit(0);
                     }
