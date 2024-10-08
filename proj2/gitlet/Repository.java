@@ -410,12 +410,17 @@ public class Repository {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
+        // 檢查是否有未追蹤的檔案會被覆蓋
+        if (willUntrackedFilesBeOverwritten(Commit.getCommitByHash(getHEADBranchFromFile().getHead()), commitToCheckFrom)) {
+            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+            System.exit(0);
+        }
         //更新HEAD branch的head commit
         Stage currStage = Stage.getStage();
         Branch currBranch = getHEADBranchFromFile();
         Commit commitToBeChecked = Commit.getCommitByHash(commitID);
         currBranch.setHeadByCommitObj(commitToBeChecked);
-        //更新檔案
+        //更新檔案，把工作目錄以及要check的的檔案都checkout一遍
         for(String fileName : commitToCheckFrom.getFiles().keySet()){
             checkOutCertainFIle(commitToCheckFrom, fileName);
         }
