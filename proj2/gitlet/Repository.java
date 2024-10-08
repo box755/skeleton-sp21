@@ -416,7 +416,10 @@ public class Repository {
         Commit commitToBeChecked = Commit.getCommitByHash(commitID);
         currBranch.setHeadByCommitObj(commitToBeChecked);
         //更新檔案
-        for(String fileName : Utils.plainFilenamesIn(CWD)){
+        for(String fileName : commitToCheckFrom.getFiles().keySet()){
+            checkOutCertainFIle(commitToCheckFrom, fileName);
+        }
+        for(String fileName : plainFilenamesIn(CWD)){
             checkOutCertainFIle(commitToCheckFrom, fileName);
         }
         //清空暫存區
