@@ -478,31 +478,41 @@ public class Repository {
         else{
             boolean hasConflict = false;
 
-            // 合併文件
-            for (String fileName : plainFilenamesIn(CWD)) {
+            // 遍歷文件，處理不同情況
+            Set<String> allFiles = new HashSet<>();
+            allFiles.addAll(HEADBranchHead.getFiles().keySet());
+            allFiles.addAll(otherBranchHead.getFiles().keySet());
+            allFiles.addAll(splitPointCommit.getFiles().keySet());
+
+            for (String fileName : allFiles) {
                 String headBlobHash = HEADBranchHead.getFiles().get(fileName);
                 String otherBlobHash = otherBranchHead.getFiles().get(fileName);
                 String splitBlobHash = splitPointCommit.getFiles().get(fileName);
 
-                // Case: 文件只存在於給定分支，加入並stage
-                if (splitBlobHash == null && otherBlobHash != null && headBlobHash == null) {
+                // 1. 文件只在 `other` 分支中被修改，應檢出並 `stage`
+                if (splitBlobHash != null && headBlobHash.equals(splitBlobHash) && otherBlobHash != null && !otherBlobHash.equals(splitBlobHash)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
-                // Case: 文件在給定分支被刪除，從CWD刪除並加入removed files
-                else if (splitBlobHash != null && otherBlobHash == null && headBlobHash != null) {
-                    join(CWD, fileName).delete();
-                    currStage.addRemovedFile(fileName);
-                }
-                // Case: 當前分支沒有修改，給定分支有修改，使用給定分支的版本
-                else if (splitBlobHash != null && headBlobHash.equals(splitBlobHash) && !otherBlobHash.equals(splitBlobHash)) {
+                // 2. 文件在 `other` 分支中存在，當前分支未修改，應檢出並 `stage`
+                else if (splitBlobHash == null && otherBlobHash != null && headBlobHash == null) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
-                // Case: 文件在兩邊有不同的修改，處理衝突
+                // 3. 文件在兩個分支中有不同的修改，衝突處理
                 else if (headBlobHash != null && otherBlobHash != null && !headBlobHash.equals(otherBlobHash)) {
                     handleConflict(fileName, headBlobHash, otherBlobHash);
                     hasConflict = true;
+                }
+                // 4. 文件在 `split point` 中存在，`other` 分支中被刪除且當前分支未修改
+                else if (splitBlobHash != null && otherBlobHash == null && headBlobHash != null && headBlobHash.equals(splitBlobHash)) {
+                    join(CWD, fileName).delete();
+                    currStage.addRemovedFile(fileName);
+                }
+                // 5. 處理新文件
+                else if (!HEADBranchHead.getFiles().containsKey(fileName) && otherBranchHead.getFiles().containsKey(fileName)) {
+                    checkOutCertainFIle(otherBranchHead, fileName);
+                    currStage.updateStage(fileName);
                 }
             }
 
@@ -511,7 +521,7 @@ public class Repository {
                 if (!HEADBranchHead.getFiles().containsKey(fileName) && otherBranchHead.getFiles().containsKey(fileName)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
-                } else if (HEADBranchHead.getFiles().containsKey(fileName) && !otherBranchHead.getFiles().containsKey(fileName)) {
+                } else  ㄒif (HEADBranchHead.getFiles().containsKey(fileName) && !otherBranchHead.getFiles().containsKey(fileName)) {
                     join(CWD, fileName).delete();
                     currStage.addRemovedFile(fileName);
                 }
