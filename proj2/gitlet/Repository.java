@@ -77,6 +77,7 @@ public class Repository {
             System.exit(0);
         }
         Stage currenStage = Stage.getStage();
+        currenStage.getFilesRemoved().remove(NameOfFileToStage);
         currenStage.updateStage(NameOfFileToStage);          //更新stage的狀態。
         currenStage.saveStage();                                   //更新後的stage存到stage檔案中。
     }
@@ -199,7 +200,8 @@ public class Repository {
     }
 
     public static void checkOutCommit(String commitHash, String fileName){
-        Commit commitToCheckFrom = Commit.getCommitByHash(commitHash);
+        Commit commitToCheckFrom = Commit.getCommitByHash(findFullCommitHash(commitHash));
+
         //如果所追蹤檔案有更改在stage中尚未提交，或是最新的commit中沒有追蹤這個檔案，報錯
         if(commitToCheckFrom == null){
             System.out.println("No commit with that id exists.");
@@ -213,6 +215,25 @@ public class Repository {
 
         checkOutCertainFIle(commitToCheckFrom, fileName);
 
+    }
+
+    private static String findFullCommitHash(String abbreviatedHash) {
+        List<String> commitHashes = plainFilenamesIn(Commit.COMMIT_DIR); // 取得所有 commit ID
+
+        // 遍歷所有 commit ID 並找到匹配的完整 ID
+        String fullCommitHash = null;
+        for (String hash : commitHashes) {
+            if (hash.startsWith(abbreviatedHash)) {
+                if (fullCommitHash != null) {
+                    // 發現多個 ID
+                    System.out.println("Ambiguous commit ID.");
+                    return null;
+                }
+                fullCommitHash = hash;
+            }
+        }
+
+        return fullCommitHash;
     }
 
     private static void checkOutCertainFIle(Commit commitToCheckFrom, String fileName){
@@ -384,7 +405,7 @@ public class Repository {
     }
 
     public static void reset(String commitID){
-        Commit commitToCheckFrom = Commit.getCommitByHash(commitID);
+        Commit commitToCheckFrom = Commit.getCommitByHash(findFullCommitHash(commitID));
         if(commitToCheckFrom == null){
             System.out.println("No commit with that id exists.");
             System.exit(0);
