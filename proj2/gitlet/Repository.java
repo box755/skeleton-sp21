@@ -522,7 +522,7 @@ public class Repository {
                 System.out.println("Encountered a merge conflict.");
             } else {
                 // 如果沒有衝突，則提交合併
-                String mergeMessage = "Merged " + branchName + " into " + otherBranch.getName() + ".";
+                String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
                 mergeCommit(HEADBranch.getHead(), mergeMessage);
             }
 
