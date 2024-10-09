@@ -477,7 +477,7 @@ public class Repository {
             System.out.println("Current branch fast-forwarded.");
             checkOutBranch(otherBranch.getName());
         }
-        else{
+        else {
             boolean hasConflict = false;
 
 
@@ -488,38 +488,9 @@ public class Repository {
             allFiles.addAll(splitPointCommit.getFiles().keySet());
 
             for (String fileName : allFiles) {
-                String splitBlobHash = splitPointCommit.getFiles().get(fileName);
-                String currentBlobHash = HEADBranchHead.getFiles().get(fileName);
-                String givenBlobHash = otherBranchHead.getFiles().get(fileName);
-
-                // Case 1: `given branch` 修改了檔案，`current branch` 未修改
-                if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
-                        && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
-                    checkOutCertainFIle(otherBranchHead, fileName);
-                    currStage.updateStage(fileName);
-                }
-                // Case 2: 檔案只存在於 `given branch`
-                else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
-                    checkOutCertainFIle(otherBranchHead, fileName);
-                    currStage.updateStage(fileName);
-                }
-                // Case 3: 檔案只存在於 `current branch`
-                else if (splitBlobHash == null && currentBlobHash != null && givenBlobHash == null) {
-                    // 保持不變
-                }
-                // Case 4: 檔案在 `current branch` 被刪除，`given branch` 未修改
-                else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
-                    join(CWD, fileName).delete();
-                    currStage.addRemovedFile(fileName);
-                }
-                // Case 5: 檔案在兩個分支中以不同方式修改，衝突
-                else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
-                    handleConflict(fileName, currentBlobHash, givenBlobHash);
-                    hasConflict = true;
-                }
+                hasConflict = handleMergeFile(fileName, splitPointCommit, HEADBranchHead, otherBranchHead, currStage) || hasConflict;
             }
 
-            // 處理衝突或進行合併提交
             if (hasConflict) {
                 System.out.println("Encountered a merge conflict.");
             } else {
@@ -527,13 +498,10 @@ public class Repository {
                 mergeCommit(HEADBranch.getHead(), mergeMessage);
             }
 
-            // 清空暫存區
-            currStage.clear();
+            currStage.clear();  // 合併完成後，清空暫存區
             currStage.saveStage();
 
         }
-
-
 
     }
 
@@ -564,6 +532,47 @@ public class Repository {
             if (isUntracked && targetTrackedFiles.containsKey(fileName)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * 專門用來處理合併中的檔案更新或衝突。
+     * @param fileName 檔案名
+     * @param splitPointCommit 分裂點提交
+     * @param headCommit 當前分支的提交
+     * @param givenCommit 給定分支的提交
+     * @param currStage 當前暫存區
+     * @return 是否發生衝突
+     */
+    private static boolean handleMergeFile(String fileName, Commit splitPointCommit, Commit headCommit, Commit givenCommit, Stage currStage) {
+        String splitBlobHash = splitPointCommit.getFiles().get(fileName);
+        String currentBlobHash = headCommit.getFiles().get(fileName);
+        String givenBlobHash = givenCommit.getFiles().get(fileName);
+
+        // Case 1: 文件在 `given branch` 修改了，`current branch` 未修改
+        if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
+                && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
+            checkOutCertainFIle(givenCommit, fileName);  // 檢出 `given branch` 的文件
+            currStage.updateStage(fileName);             // 更新暫存區
+            return false;
+        }
+        // Case 2: 檔案只存在於 `given branch`，需要加入暫存區
+        else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
+            checkOutCertainFIle(givenCommit, fileName);  // 檢出新文件
+            currStage.updateStage(fileName);             // 更新暫存區
+            return false;
+        }
+        // Case 3: 檔案在 `current branch` 被刪除，給定分支沒有修改，應刪除並標記為移除
+        else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
+            join(CWD, fileName).delete();                // 刪除該檔案
+            currStage.addRemovedFile(fileName);          // 標記檔案為已刪除
+            return false;
+        }
+        // Case 4: 檔案在兩邊都不同，發生衝突
+        else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
+            handleConflict(fileName, currentBlobHash, givenBlobHash); // 處理衝突
+            return true;
         }
         return false;
     }
