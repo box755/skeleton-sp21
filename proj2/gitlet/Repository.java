@@ -490,7 +490,7 @@ public class Repository {
                 String splitBlobHash = splitPointCommit.getFiles().get(fileName);
 
                 // 1. 文件只在 `other` 分支中被修改，應檢出並 `stage`
-                if (splitBlobHash != null && headBlobHash.equals(splitBlobHash) && otherBlobHash != null && !otherBlobHash.equals(splitBlobHash)) {
+                if (splitBlobHash != null && headBlobHash != null && otherBlobHash != null && headBlobHash.equals(splitBlobHash) && !otherBlobHash.equals(splitBlobHash)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
@@ -500,7 +500,7 @@ public class Repository {
                     currStage.updateStage(fileName);
                 }
                 // 3. 文件在兩個分支中有不同的修改，衝突處理
-                else if (headBlobHash != null && otherBlobHash != null && !headBlobHash.equals(otherBlobHash)) {
+                else if (headBlobHash != null && otherBlobHash != null && splitBlobHash != null && !headBlobHash.equals(otherBlobHash)) {
                     handleConflict(fileName, headBlobHash, otherBlobHash);
                     hasConflict = true;
                 }
