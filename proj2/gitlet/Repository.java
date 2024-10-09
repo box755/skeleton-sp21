@@ -478,65 +478,55 @@ public class Repository {
         else{
             boolean hasConflict = false;
 
-            // 遍歷文件，處理不同情況
+
+            // 開始合併文件
             Set<String> allFiles = new HashSet<>();
             allFiles.addAll(HEADBranchHead.getFiles().keySet());
             allFiles.addAll(otherBranchHead.getFiles().keySet());
             allFiles.addAll(splitPointCommit.getFiles().keySet());
 
             for (String fileName : allFiles) {
-                String headBlobHash = HEADBranchHead.getFiles().get(fileName);
-                String otherBlobHash = otherBranchHead.getFiles().get(fileName);
                 String splitBlobHash = splitPointCommit.getFiles().get(fileName);
+                String currentBlobHash = HEADBranchHead.getFiles().get(fileName);
+                String givenBlobHash = otherBranchHead.getFiles().get(fileName);
 
-                // 1. 文件只在 `other` 分支中被修改，應檢出並 `stage`
-                if (splitBlobHash != null && headBlobHash != null && otherBlobHash != null && headBlobHash.equals(splitBlobHash) && !otherBlobHash.equals(splitBlobHash)) {
+                // Case 1: 文件在給定分支修改了，當前分支未修改
+                if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
+                        && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
-                // 2. 文件在 `other` 分支中存在，當前分支未修改，應檢出並 `stage`
-                else if (splitBlobHash == null && otherBlobHash != null && headBlobHash == null) {
+                // Case 2: 文件只存在於給定分支
+                else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
-                // 3. 文件在兩個分支中有不同的修改，衝突處理
-                else if (headBlobHash != null && otherBlobHash != null && splitBlobHash != null && !headBlobHash.equals(otherBlobHash)) {
-                    handleConflict(fileName, headBlobHash, otherBlobHash);
+                // Case 3: 文件只存在於當前分支，保持不變
+                else if (splitBlobHash == null && currentBlobHash != null && givenBlobHash == null) {
+                    // 保持不變
+                }
+                // Case 4: 文件在當前分支被刪除，給定分支沒有修改，從CWD刪除
+                else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
+                    join(CWD, fileName).delete();
+                    currStage.addRemovedFile(fileName);
+                }
+                // Case 5: 文件在兩個分支中以不同方式修改，衝突
+                else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
+                    handleConflict(fileName, currentBlobHash, givenBlobHash);
                     hasConflict = true;
                 }
-                // 4. 文件在 `split point` 中存在，`other` 分支中被刪除且當前分支未修改
-                else if (splitBlobHash != null && otherBlobHash == null && headBlobHash != null && headBlobHash.equals(splitBlobHash)) {
-                    join(CWD, fileName).delete();
-                    currStage.addRemovedFile(fileName);
-                }
-                // 5. 處理新文件
-                else if (!HEADBranchHead.getFiles().containsKey(fileName) && otherBranchHead.getFiles().containsKey(fileName)) {
-                    checkOutCertainFIle(otherBranchHead, fileName);
-                    currStage.updateStage(fileName);
-                }
             }
 
-            // 處理新文件和文件刪除情況
-            for (String fileName : plainFilenamesIn(CWD)) {
-                if (!HEADBranchHead.getFiles().containsKey(fileName) && otherBranchHead.getFiles().containsKey(fileName)) {
-                    checkOutCertainFIle(otherBranchHead, fileName);
-                    currStage.updateStage(fileName);
-                } else  if (HEADBranchHead.getFiles().containsKey(fileName) && !otherBranchHead.getFiles().containsKey(fileName)) {
-                    join(CWD, fileName).delete();
-                    currStage.addRemovedFile(fileName);
-                }
-            }
-            // 提交合併
-            String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
-            mergeCommit(otherBranch.getHead(), mergeMessage);
-
-            // 如果有衝突，顯示衝突訊息
+            // 如果有衝突，則通知使用者
             if (hasConflict) {
                 System.out.println("Encountered a merge conflict.");
+            } else {
+                // 如果沒有衝突，則提交合併
+                String mergeMessage = "Merged " + branchName + " into " + otherBranch.getName() + ".";
+                mergeCommit(HEADBranch.getHead(), mergeMessage);
             }
 
-
-
+            currStage.saveStage();
         }
 
 
