@@ -521,7 +521,7 @@ public class Repository {
                 if (!HEADBranchHead.getFiles().containsKey(fileName) && otherBranchHead.getFiles().containsKey(fileName)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
-                } else  ㄒif (HEADBranchHead.getFiles().containsKey(fileName) && !otherBranchHead.getFiles().containsKey(fileName)) {
+                } else  if (HEADBranchHead.getFiles().containsKey(fileName) && !otherBranchHead.getFiles().containsKey(fileName)) {
                     join(CWD, fileName).delete();
                     currStage.addRemovedFile(fileName);
                 }
