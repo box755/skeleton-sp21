@@ -471,6 +471,8 @@ public class Repository {
             System.out.println("Given branch is an ancestor of the current branch.");
             System.exit(0);
         }
+
+        //Case2:快進
         else if(HEADBranch.getHead().equals(splitPointCommit.getHash())){
             System.out.println("Current branch fast-forwarded.");
             checkOutBranch(otherBranch.getName());
@@ -490,41 +492,45 @@ public class Repository {
                 String currentBlobHash = HEADBranchHead.getFiles().get(fileName);
                 String givenBlobHash = otherBranchHead.getFiles().get(fileName);
 
-                // Case 1: 文件在給定分支修改了，當前分支未修改
+                // Case 1: `given branch` 修改了檔案，`current branch` 未修改
                 if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
                         && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
-                // Case 2: 文件只存在於給定分支
+                // Case 2: 檔案只存在於 `given branch`
                 else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
                     checkOutCertainFIle(otherBranchHead, fileName);
                     currStage.updateStage(fileName);
                 }
-                // Case 3: 文件只存在於當前分支，保持不變
+                // Case 3: 檔案只存在於 `current branch`
                 else if (splitBlobHash == null && currentBlobHash != null && givenBlobHash == null) {
                     // 保持不變
                 }
-                // Case 4: 文件在當前分支被刪除，給定分支沒有修改，從CWD刪除
+                // Case 4: 檔案在 `current branch` 被刪除，`given branch` 未修改
                 else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
                     join(CWD, fileName).delete();
                     currStage.addRemovedFile(fileName);
                 }
-                // Case 5: 文件在兩個分支中以不同方式修改，衝突
+                // Case 5: 檔案在兩個分支中以不同方式修改，衝突
                 else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
                     handleConflict(fileName, currentBlobHash, givenBlobHash);
                     hasConflict = true;
                 }
             }
 
-            // 如果有衝突，則通知使用者
+            // 處理衝突或進行合併提交
             if (hasConflict) {
                 System.out.println("Encountered a merge conflict.");
             } else {
-                // 如果沒有衝突，則提交合併
                 String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
                 mergeCommit(HEADBranch.getHead(), mergeMessage);
             }
+
+            // 清空暫存區
+            currStage.clear();
+            currStage.saveStage();
+
         }
 
 
