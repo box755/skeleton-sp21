@@ -525,8 +525,6 @@ public class Repository {
                 String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
                 mergeCommit(HEADBranch.getHead(), mergeMessage);
             }
-
-            currStage.saveStage();
         }
 
 
