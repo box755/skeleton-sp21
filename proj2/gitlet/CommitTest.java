@@ -90,4 +90,37 @@ public class CommitTest {
 
     }
 
+    @Test
+    public void mergeTest() {
+        // ... 現有的合併代碼 ...
+
+        // 調試輸出
+        System.out.println("=== 調試信息 ===");
+        System.out.println("合併後暫存區中的檔案：");
+        Stage currStage = Stage.getStage();
+        Commit otherCommit = Commit.getCommitByHash(Branch.loadBranchByName("other").getHead());
+        Commit currCommit = Commit.getCommitByHash(Repository.getHEADBranchFromFile().getHead());
+        for (String file : currStage.getFilesChanged().keySet()) {
+            System.out.println(file);
+        }
+
+        System.out.println("合併後提交中的檔案：");
+        for (String file : currCommit.getFiles().keySet()) {
+            System.out.println(file);
+        }
+
+
+        System.out.println("工作目錄中的檔案：");
+        for (String file : plainFilenamesIn(Repository.CWD)) {
+            System.out.println(file);
+        }
+
+        System.out.println("Other中的檔案：");
+        for (String file : otherCommit.getFiles().keySet()) {
+            System.out.println(file);
+        }
+
+
+    }
+
 }

@@ -495,8 +495,8 @@ public class Repository {
             } else {
                 String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
                 mergeCommit(HEADBranch.getHead(), mergeMessage);
-                currStage.clear();  // 合併完成後，清空暫存區
-                currStage.saveStage();
+//                currStage.clear();  // 合併完成後，清空暫存區
+//                currStage.saveStage();
             }
 
 
@@ -554,7 +554,8 @@ public class Repository {
         if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
                 && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出 `given branch` 的文件
-            currStage.addToStage(fileName);             // 更新暫存區
+            currStage.addToStage(fileName);// 更新暫存區
+            currStage.saveStage();
             return false;
         }
 
@@ -580,12 +581,14 @@ public class Repository {
         else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出新文件
             currStage.addToStage(fileName);             // 更新暫存區
+            currStage.saveStage();
             return false;
         }
         // Case 3: 檔案在 `current branch` 被刪除，給定分支沒有修改，應刪除並標記為移除
         else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
             join(CWD, fileName).delete();                // 刪除該檔案
             currStage.addRemovedFile(fileName);          // 標記檔案為已刪除
+            currStage.saveStage();
             return false;
         }
         // Case 4: 檔案在兩邊都不同，發生衝突
@@ -633,7 +636,9 @@ public class Repository {
         String conflictContent = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + otherContent + "\n>>>>>>>\n";
         writeContents(join(CWD, fileName), conflictContent);
 
-        Stage.getStage().addToStage(fileName);
+        Stage currstage = Stage.getStage();
+        currstage.addToStage(fileName);
+        currstage.saveStage();
     }
 
 }
