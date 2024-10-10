@@ -442,6 +442,12 @@ public class Repository {
         //讀取branch和head
         Branch HEADBranch = getHEADBranchFromFile();
         Branch otherBranch = Branch.loadBranchByName(branchName);
+
+        if(otherBranch == null){
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        }
+
         Commit HEADBranchHead = Commit.getCommitByHash(HEADBranch.getHead());
         Commit otherBranchHead = Commit.getCommitByHash(otherBranch.getHead());
 
@@ -452,10 +458,7 @@ public class Repository {
             System.out.println("You have uncommitted changes.");
             System.exit(0);
         }
-        else if(otherBranch == null){
-            System.out.println("A branch with that name does not exist.");
-            System.exit(0);
-        }
+
         else if(HEADBranch.getName().equals(otherBranch.getName())){
             System.out.println("Cannot merge a branch with itself.");
             System.exit(0);
@@ -475,8 +478,6 @@ public class Repository {
         else if(HEADBranch.getHead().equals(splitPointCommit.getHash())){
             System.out.println("Current branch fast-forwarded.");
             checkOutBranch(otherBranch.getName());
-            HEADBranch.setHeadByCommitObj(otherBranchHead);
-//            checkOutBranch(otherBranch.getName());
         }
         else {
             boolean hasConflict = false;
