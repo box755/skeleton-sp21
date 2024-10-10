@@ -494,12 +494,12 @@ public class Repository {
 
             if (hasConflict) {
                 System.out.println("Encountered a merge conflict.");
-            } else {
-                String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
-                mergeCommit(HEADBranch.getHead(), mergeMessage);
-//                currStage.clear();  // 合併完成後，清空暫存區
-//                currStage.saveStage();
             }
+
+            String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
+            mergeCommit(HEADBranch.getHead(), mergeMessage);
+
+
 
 
 
