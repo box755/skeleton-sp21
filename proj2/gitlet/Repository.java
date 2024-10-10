@@ -574,8 +574,20 @@ public class Repository {
             return false;
         }
 
-        //當前存在 給定不存在
-        else if(currentBlobHash != null && givenBlobHash == null){
+        //分裂點有，現在有，給定刪除了
+        else if (splitBlobHash != null && currentBlobHash != null && splitBlobHash.equals(currentBlobHash) && givenBlobHash ==null) {
+            join(CWD, fileName).delete();
+            currStage.addRemovedFile(fileName);
+            currStage.saveStage();
+        }
+
+        //分裂點有，現在刪除了，給定有
+        else if (splitBlobHash != null && currentBlobHash == null && givenBlobHash !=null && splitBlobHash.equals(givenBlobHash)) {
+            return  false;
+        }
+
+        //分裂點不存在 當前存在 給定不存在
+        else if(splitBlobHash ==null && currentBlobHash != null && givenBlobHash == null){
             return false;
         }
 
@@ -586,11 +598,7 @@ public class Repository {
             currStage.saveStage();
             return false;
         }
-        // Case 3: 檔案在 `current branch` 被刪除，給定分支沒有修改，應刪除並標記為移除
-        else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
-            rm(fileName);// 刪除該檔案
-            return false;
-        }
+
         // Case 4: 檔案在兩邊都不同，發生衝突
         else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
             handleConflict(fileName, currentBlobHash, givenBlobHash); // 處理衝突
