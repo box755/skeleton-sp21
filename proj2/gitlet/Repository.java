@@ -552,7 +552,7 @@ public class Repository {
         String currentBlobHash = headCommit.getFiles().get(fileName);
         String givenBlobHash = givenCommit.getFiles().get(fileName);
 
-        // Case 1: 文件在 `given branch` 修改了，`current branch` 未修改
+        // 當案在給定修改，現在未修改
         if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
                 && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出 `given branch` 的文件
@@ -591,7 +591,7 @@ public class Repository {
             return false;
         }
 
-        // Case 2: 檔案只存在於 `given branch`，需要加入暫存區
+        //檔案只存在於given branch，需要加入暫存區
         else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出新文件
             currStage.addToStage(fileName);             // 更新暫存區
@@ -599,7 +599,7 @@ public class Repository {
             return false;
         }
 
-        // Case 4: 檔案在兩邊都不同，發生衝突
+        //檔案在兩邊都不同，發生衝突
         else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
             handleConflict(fileName, currentBlobHash, givenBlobHash); // 處理衝突
             return true;
@@ -641,7 +641,7 @@ public class Repository {
         String headContent = headBlob != null ? headBlob.getContent() : "";
         String otherContent = otherBlob != null ? otherBlob.getContent() : "";
 
-        String conflictContent = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + otherContent + "\n>>>>>>>\n";
+        String conflictContent = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + otherContent + "\n>>>>>>>";
         writeContents(join(CWD, fileName), conflictContent);
 
         Stage currstage = Stage.getStage();
