@@ -576,11 +576,10 @@ public class Repository {
         }
 
         //分裂點有，現在有，給定刪除了
-        else if (splitBlobHash != null && currentBlobHash != null && givenBlobHash == null) {
+        else if (splitBlobHash != null && currentBlobHash != null && splitBlobHash.equals(currentBlobHash) && givenBlobHash ==null) {
             join(CWD, fileName).delete();
             currStage.addRemovedFile(fileName);
             currStage.saveStage();
-            return false;
         }
 
         //分裂點有，現在刪除了，給定有
