@@ -584,8 +584,6 @@ public class Repository {
 
         //分裂點有，現在刪除了，給定有
         else if (splitBlobHash != null && currentBlobHash == null && givenBlobHash !=null && splitBlobHash.equals(givenBlobHash)) {
-            currStage.addRemovedFile(fileName);
-            currStage.saveStage();
             return  false;
         }
 
@@ -598,6 +596,13 @@ public class Repository {
         else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出新文件
             currStage.addToStage(fileName);             // 更新暫存區
+            currStage.saveStage();
+            return false;
+        }
+        else if (currentBlobHash != null && givenBlobHash == null &&
+                (splitBlobHash == null || !splitBlobHash.equals(currentBlobHash))) {
+            join(CWD, fileName).delete();
+            currStage.addRemovedFile(fileName);
             currStage.saveStage();
             return false;
         }
