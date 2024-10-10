@@ -600,7 +600,7 @@ public class Repository {
         }
 
         //檔案在兩邊都不同，發生衝突
-        else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
+        else if ((currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) || currentBlobHash == null || givenBlobHash == null) {
             handleConflict(fileName, currentBlobHash, givenBlobHash); // 處理衝突
             return true;
         }
