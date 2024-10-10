@@ -600,8 +600,17 @@ public class Repository {
         }
 
         //檔案在兩邊都不同，發生衝突
-        else if ((currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) || currentBlobHash == null || givenBlobHash == null) {
+        else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
             handleConflict(fileName, currentBlobHash, givenBlobHash); // 處理衝突
+            return true;
+        }
+
+        else if((currentBlobHash != null && givenBlobHash == null &&
+                (splitBlobHash == null || !splitBlobHash.equals(currentBlobHash))) ||
+                (currentBlobHash == null && givenBlobHash != null &&
+                        (splitBlobHash == null || !splitBlobHash.equals(givenBlobHash)))) {
+            // 這是一個衝突：一個分支修改了文件，另一個刪除了它
+            handleConflict(fileName, currentBlobHash, givenBlobHash);
             return true;
         }
         return false;
