@@ -586,9 +586,7 @@ public class Repository {
         }
         // Case 3: 檔案在 `current branch` 被刪除，給定分支沒有修改，應刪除並標記為移除
         else if (splitBlobHash != null && givenBlobHash == null && splitBlobHash.equals(currentBlobHash)) {
-            join(CWD, fileName).delete();                // 刪除該檔案
-            currStage.addRemovedFile(fileName);          // 標記檔案為已刪除
-            currStage.saveStage();
+            rm(fileName);// 刪除該檔案
             return false;
         }
         // Case 4: 檔案在兩邊都不同，發生衝突
