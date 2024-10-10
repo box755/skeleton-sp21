@@ -32,7 +32,7 @@ public class Stage implements Serializable {
         }
         filesRemoved.add(fileName);
     }
-    public void updateStage(String fileName) {
+    public void addToStage(String fileName) {
         // 獲取當前branch，並獲取其head commit的檔案
         //Branch currentBranch = Utils.readObject(join(Branch.BRANCH_DIR, "Master"), Branch.class);
         Branch currBranch = Repository.getHEADBranchFromFile();
@@ -58,6 +58,10 @@ public class Stage implements Serializable {
         else{
             filesChanged.remove(fileName);
         }
+    }
+
+    public void addFileChanged(String fileName, Blob blob){
+
     }
 
     public void saveStage(){

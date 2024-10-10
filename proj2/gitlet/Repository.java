@@ -1,7 +1,6 @@
 package gitlet;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 import static gitlet.Utils.*;
@@ -78,7 +77,7 @@ public class Repository {
         }
         Stage currenStage = Stage.getStage();
         currenStage.getFilesRemoved().remove(NameOfFileToStage);
-        currenStage.updateStage(NameOfFileToStage);          //更新stage的狀態。
+        currenStage.addToStage(NameOfFileToStage);          //更新stage的狀態。
         currenStage.saveStage();                                   //更新後的stage存到stage檔案中。
     }
 
@@ -496,10 +495,11 @@ public class Repository {
             } else {
                 String mergeMessage = "Merged " + branchName + " into " + HEADBranch.getName() + ".";
                 mergeCommit(HEADBranch.getHead(), mergeMessage);
+                currStage.clear();  // 合併完成後，清空暫存區
+                currStage.saveStage();
             }
 
-            currStage.clear();  // 合併完成後，清空暫存區
-            currStage.saveStage();
+
 
         }
 
@@ -554,13 +554,32 @@ public class Repository {
         if (splitBlobHash != null && givenBlobHash != null && currentBlobHash != null
                 && splitBlobHash.equals(currentBlobHash) && !splitBlobHash.equals(givenBlobHash)) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出 `given branch` 的文件
-            currStage.updateStage(fileName);             // 更新暫存區
+            currStage.addToStage(fileName);             // 更新暫存區
             return false;
         }
+
+        //分裂點有，現在有，當前被修改
+        else if(splitBlobHash != null && currentBlobHash != null && givenBlobHash != null && !splitBlobHash.equals(currentBlobHash) && splitBlobHash.equals(givenBlobHash)){
+            return false;
+        }
+
+        //分裂點有 但在兩個分支都被修改或刪除 不暫存
+        else if(splitBlobHash != null && currentBlobHash != null && givenBlobHash != null && !splitBlobHash.equals(currentBlobHash) && currentBlobHash.equals(givenBlobHash)){
+            return  false;
+        }
+        else if(splitBlobHash != null && currentBlobHash == null && givenBlobHash == null){
+            return false;
+        }
+
+        //當前存在 給定不存在
+        else if(currentBlobHash != null && givenBlobHash == null){
+            return false;
+        }
+
         // Case 2: 檔案只存在於 `given branch`，需要加入暫存區
         else if (splitBlobHash == null && givenBlobHash != null && currentBlobHash == null) {
             checkOutCertainFIle(givenCommit, fileName);  // 檢出新文件
-            currStage.updateStage(fileName);             // 更新暫存區
+            currStage.addToStage(fileName);             // 更新暫存區
             return false;
         }
         // Case 3: 檔案在 `current branch` 被刪除，給定分支沒有修改，應刪除並標記為移除
@@ -614,7 +633,7 @@ public class Repository {
         String conflictContent = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + otherContent + "\n>>>>>>>\n";
         writeContents(join(CWD, fileName), conflictContent);
 
-        Stage.getStage().updateStage(fileName);
+        Stage.getStage().addToStage(fileName);
     }
 
 }
