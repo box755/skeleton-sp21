@@ -641,7 +641,7 @@ public class Repository {
         String headContent = headBlob != null ? headBlob.getContent() : "";
         String otherContent = otherBlob != null ? otherBlob.getContent() : "";
 
-        String conflictContent = "<<<<<<< HEAD\n" + headContent + "\n=======\n" + otherContent + "\n>>>>>>>";
+        String conflictContent = "<<<<<<< HEAD\n" + headContent + "=======\n" + otherContent + ">>>>>>>\n";
         writeContents(join(CWD, fileName), conflictContent);
 
         Stage currstage = Stage.getStage();
