@@ -475,6 +475,8 @@ public class Repository {
         else if(HEADBranch.getHead().equals(splitPointCommit.getHash())){
             System.out.println("Current branch fast-forwarded.");
             checkOutBranch(otherBranch.getName());
+            HEADBranch.setHeadByCommitObj(otherBranchHead);
+//            checkOutBranch(otherBranch.getName());
         }
         else {
             boolean hasConflict = false;

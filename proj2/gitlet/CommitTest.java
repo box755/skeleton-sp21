@@ -109,6 +109,11 @@ public class CommitTest {
             System.out.println(file);
         }
 
+        System.out.println("合併後提交中的檔案：");
+        for (String file : currCommit.getFiles().keySet()) {
+            System.out.println(file);
+        }
+
 
         System.out.println("工作目錄中的檔案：");
         for (String file : plainFilenamesIn(Repository.CWD)) {
