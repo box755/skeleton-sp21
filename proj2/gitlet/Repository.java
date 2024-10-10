@@ -644,18 +644,30 @@ public class Repository {
     }
 
     private static void handleConflict(String fileName, String headBlobHash, String otherBlobHash) {
-        Blob headBlob = readObject(join(Blob.BLOB_DIR, headBlobHash), Blob.class);
-        Blob otherBlob = readObject(join(Blob.BLOB_DIR, otherBlobHash), Blob.class);
+        String headContent = "";
+        String otherContent = "";
 
-        String headContent = headBlob != null ? headBlob.getContent() : "";
-        String otherContent = otherBlob != null ? otherBlob.getContent() : "";
+        if (headBlobHash != null) {
+            Blob headBlob = readObject(join(Blob.BLOB_DIR, headBlobHash), Blob.class);
+            headContent = headBlob.getContent();
+        }
 
-        String conflictContent = "<<<<<<< HEAD\n" + headContent + "=======\n" + otherContent + ">>>>>>>\n";
+        if (otherBlobHash != null) {
+            Blob otherBlob = readObject(join(Blob.BLOB_DIR, otherBlobHash), Blob.class);
+            otherContent = otherBlob.getContent();
+        }
+
+        String conflictContent = "<<<<<<< HEAD\n" +
+                headContent +
+                "=======\n" +
+                otherContent +
+                ">>>>>>>\n";
+
         writeContents(join(CWD, fileName), conflictContent);
 
-        Stage currstage = Stage.getStage();
-        currstage.addToStage(fileName);
-        currstage.saveStage();
+        Stage currStage = Stage.getStage();
+        currStage.addToStage(fileName);
+        currStage.saveStage();
     }
 
 }
