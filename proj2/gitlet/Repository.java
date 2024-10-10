@@ -584,6 +584,8 @@ public class Repository {
 
         //分裂點有，現在刪除了，給定有
         else if (splitBlobHash != null && currentBlobHash == null && givenBlobHash !=null && splitBlobHash.equals(givenBlobHash)) {
+            currStage.addRemovedFile(fileName);
+            currStage.saveStage();
             return  false;
         }
 
@@ -614,7 +616,7 @@ public class Repository {
             handleConflict(fileName, currentBlobHash, givenBlobHash);
             return true;
         }
-        
+
         return false;
     }
 
