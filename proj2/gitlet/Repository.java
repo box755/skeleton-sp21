@@ -599,13 +599,6 @@ public class Repository {
             currStage.saveStage();
             return false;
         }
-        else if (currentBlobHash != null && givenBlobHash == null &&
-                (splitBlobHash == null || !splitBlobHash.equals(currentBlobHash))) {
-            join(CWD, fileName).delete();
-            currStage.addRemovedFile(fileName);
-            currStage.saveStage();
-            return false;
-        }
 
         //檔案在兩邊都不同，發生衝突
         else if (currentBlobHash != null && givenBlobHash != null && !currentBlobHash.equals(givenBlobHash)) {
