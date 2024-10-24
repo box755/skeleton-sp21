@@ -93,7 +93,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             Node node = iterator.next();
             if(node.key.equals(key)){
                 iterator.remove();
-                //iterator<> default void remove()會把當前指向的節點刪除
+                //iterator<> default void remove()會把上次Next回傳的節點刪除。注意，不是當前節點，因為next會往後移動指針。
             }
         }
         size--;
