@@ -14,6 +14,14 @@ public class Engine {
     private static Random rand;
     private static List<Point> roomMidPoints = new ArrayList<>();
 
+    public static void main(String[] args) {
+        Engine engine = new Engine();
+        TETile[][] world = engine.interactWithInputString("n5197880843569031643s");
+        TERenderer ter = new TERenderer();
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(world);
+    }
+
     public void interactWithKeyboard() {
         // Implementation for keyboard interaction
     }
@@ -28,7 +36,7 @@ public class Engine {
         return finalWorldFrame;
     }
 
-    private int getSeed(String input) {
+    private long getSeed(String input) {
         StringBuilder str = new StringBuilder();
         boolean read = false;
         for (char c : input.toCharArray()) {
@@ -40,7 +48,7 @@ public class Engine {
                 str.append(c);
             }
         }
-        return Integer.parseInt(str.toString());
+        return Long.parseLong(str.toString());
     }
 
     private void generateRooms(TETile[][] world) {
