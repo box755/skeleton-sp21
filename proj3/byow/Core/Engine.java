@@ -13,14 +13,6 @@ public class Engine {
     public static final int HEIGHT = 30;
     private static final List<Point> roomMidPoints = new ArrayList<>();
 
-    public static void main(String[] args) {
-        Engine engine = new Engine();
-        TETile[][] world = engine.interactWithInputString("n5197880843569031643s");
-        TERenderer ter = new TERenderer();
-        ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(world);
-    }
-
     public void interactWithKeyboard() {
         // Implementation for keyboard interaction
     }
@@ -191,7 +183,7 @@ public class Engine {
         }
     }
 
-    private static class Edge implements Comparable<Edge> {
+    private class Edge implements Comparable<Edge> {
         int from, to, weight;
 
         Edge(int from, int to, int weight) {
