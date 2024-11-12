@@ -11,7 +11,7 @@ public class Engine {
     TERenderer ter = new TERenderer();
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private static final List<Point> roomMidPoints = new ArrayList<>();
+    private final List<Point> roomMidPoints = new ArrayList<>();
 
     public void interactWithKeyboard() {
         // Implementation for keyboard interaction
@@ -201,7 +201,7 @@ public class Engine {
 
     //DisJoint set
     //提供union功能
-    private class DisjointSet{
+    private static class DisjointSet{
         int[] parents = new int[roomMidPoints.size()];
         private DisjointSet(){
             for(int i = 0; i < roomMidPoints.size(); i++){
