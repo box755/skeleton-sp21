@@ -11,8 +11,7 @@ public class Engine {
     TERenderer ter = new TERenderer();
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private static Random rand;
-    private static List<Point> roomMidPoints = new ArrayList<>();
+    private static final List<Point> roomMidPoints = new ArrayList<>();
 
     public static void main(String[] args) {
         Engine engine = new Engine();
@@ -27,11 +26,11 @@ public class Engine {
     }
 
     public TETile[][] interactWithInputString(String input) {
-        rand = new Random(getSeed(input));
+        Random rand = new Random(getSeed(input));
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         initializeWorld(finalWorldFrame);
-        generateRooms(finalWorldFrame);
-        generateHallways(finalWorldFrame);
+        generateRooms(finalWorldFrame, rand);
+        generateHallways(finalWorldFrame, rand);
         addWalls(finalWorldFrame);
         return finalWorldFrame;
     }
@@ -51,7 +50,7 @@ public class Engine {
         return Long.parseLong(str.toString());
     }
 
-    private void generateRooms(TETile[][] world) {
+    private void generateRooms(TETile[][] world, Random rand) {
         int roomNum = RandomUtils.uniform(rand, 100, 200);
         int attempts = 0;
         int maxAttempts = 100;
@@ -99,7 +98,7 @@ public class Engine {
         }
     }
 
-    private void generateHallways(TETile[][] world) {
+    private void generateHallways(TETile[][] world, Random rand) {
         // Create a minimum spanning tree to ensure connectivity
         List<Edge> edges = new ArrayList<>();
         for (int i = 0; i < roomMidPoints.size(); i++) {
@@ -121,16 +120,16 @@ public class Engine {
         for (Edge edge : edges) {
             //如果還沒連接，連接兩個點
             if (!ds.isConnected(edge.from, edge.to)) {
-                createHallway(roomMidPoints.get(edge.from), roomMidPoints.get(edge.to), world);
+                createHallway(roomMidPoints.get(edge.from), roomMidPoints.get(edge.to), world, rand);
                 ds.connect(edge.from, edge.to);
             } else if (rand.nextDouble() < 0.15) {//如果已經連接，隨機新增路徑
-                createHallway(roomMidPoints.get(edge.from), roomMidPoints.get(edge.to), world);
+                createHallway(roomMidPoints.get(edge.from), roomMidPoints.get(edge.to), world, rand);
             }
         }
     }
 
 
-    private void createHallway(Point start, Point end, TETile[][] world) {
+    private void createHallway(Point start, Point end, TETile[][] world, Random rand) {
         int x = start.x;
         int y = start.y;
 
