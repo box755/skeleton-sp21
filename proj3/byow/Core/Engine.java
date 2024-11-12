@@ -201,7 +201,7 @@ public class Engine {
 
     //DisJoint set
     //提供union功能
-    private static class DisjointSet{
+    private class DisjointSet{
         int[] parents = new int[roomMidPoints.size()];
         private DisjointSet(){
             for(int i = 0; i < roomMidPoints.size(); i++){
