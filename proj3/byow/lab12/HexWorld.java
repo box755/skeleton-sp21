@@ -15,7 +15,6 @@ public class HexWorld {
     private static final int WIDTH = 60;
     private static final int HEIGHT = 40;
     private static Random random  = new Random(234234);
-
     public static void main(String[] args){
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         TERenderer ter = new TERenderer();

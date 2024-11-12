@@ -1,6 +1,5 @@
 package byow.lab13;
 
-import byow.Core.RandomUtils;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.Color;
@@ -45,6 +44,7 @@ public class MemoryGame {
          */
         this.width = width;
         this.height = height;
+        this.rand = new Random(seed);
         StdDraw.setCanvasSize(this.width * 16, this.height * 16);
         Font font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
@@ -58,27 +58,89 @@ public class MemoryGame {
 
     public String generateRandomString(int n) {
         //TODO: Generate random string of letters of length n
-        return null;
+        StringBuilder str = new StringBuilder();
+        for(int i =0; i < n; i++){
+            str.append(CHARACTERS[rand.nextInt(26)]);
+        }
+        return str.toString();
     }
 
     public void drawFrame(String s) {
         //TODO: Take the string and display it in the center of the screen
         //TODO: If game is not over, display relevant game information at the top of the screen
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setFont(new Font("SERIF", Font.BOLD, 30 ));
+        StdDraw.setPenColor(new Color(255, 255, 255));
+        StdDraw.line(0, this.height - 3, this.width, this.height - 3);
+
+        if(!gameOver){
+            StdDraw.textLeft(0, this.height - 1, "Round " + round );
+            StdDraw.textRight(this.width, this.height - 1, ENCOURAGEMENT[rand.nextInt(7)]);
+            StdDraw.text(this.width/2, this.height/2, s);
+            if(playerTurn){
+                StdDraw.text(this.width/2, this.height - 1, "Type!");
+            }
+            else{
+                StdDraw.text(this.width/2, this.height - 1, "Watch!");
+            }
+
+        }
+        else{
+            StdDraw.text(this.width/2, this.height/2, s);
+        }
+
+        StdDraw.show();
+
     }
 
-    public void flashSequence(String letters) {
+    public String flashSequence(String letters) {
         //TODO: Display each character in letters, making sure to blank the screen between letters
+        for(String str : letters.split("")){
+            drawFrame(str);
+            StdDraw.pause(1000);
+            drawFrame("");
+            StdDraw.pause(500);
+
+        }
+        playerTurn = true;
+        drawFrame("");
+        return letters;
     }
 
     public String solicitNCharsInput(int n) {
         //TODO: Read n letters of player input
-        return null;
+        StringBuilder str = new StringBuilder();
+        while(n > 0){
+            if(StdDraw.hasNextKeyTyped()){
+                str.append(StdDraw.nextKeyTyped());
+                drawFrame(str.toString());
+                n --;
+            }
+        }
+        return str.toString();
     }
 
     public void startGame() {
         //TODO: Set any relevant variables before the game starts
+        round = 1;
 
         //TODO: Establish Engine loop
-    }
+        while(!gameOver){
+            playerTurn = false;
+            String answer = generateRandomString(round);
+            drawFrame("Round " + round);
+            StdDraw.pause(1000);
+            flashSequence(answer);
+            String userTyped = solicitNCharsInput(round);
+            StdDraw.pause(500);
+            if(!answer.equals(userTyped)){
+                gameOver = true;
+            }
+            round ++;
+        }
 
+        drawFrame("Game Over! You made it to round " + round);
+
+
+    }
 }
