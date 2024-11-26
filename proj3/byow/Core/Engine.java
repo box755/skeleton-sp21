@@ -182,13 +182,13 @@ public class Engine {
                 world = handleMovements(world, input);
                 break;
             case 'L':
-                handleLoadPos();
                 world = handleLoadWorld();
+                if (world == null) {
+                    throw new IllegalStateException("No saved world found!");
+                }
+                handleLoadPos();
                 world = handleMovements(world, input);
                 break;
-//            case 'Q':
-//                System.exit(0);
-//                break;
             default:
                 throw new IllegalArgumentException("Invalid input: " + input);
         }
@@ -242,7 +242,7 @@ public class Engine {
             int yPos = rolePos.y;
             switch (movement){
                 case 'W':
-                    if(xPos + 1 < WIDTH && world[xPos][yPos + 1].equals(Tileset.FLOOR)){
+                    if(yPos + 1 < WIDTH && world[xPos][yPos + 1].equals(Tileset.FLOOR)){
                         rolePos.setLocation(xPos, yPos + 1);
                     }
                     break;
@@ -257,7 +257,7 @@ public class Engine {
                     }
                     break;
                 case 'D':
-                    if(yPos + 1 < HEIGHT && world[xPos + 1][yPos].equals(Tileset.FLOOR)){
+                    if(xPos + 1 < HEIGHT && world[xPos + 1][yPos].equals(Tileset.FLOOR)){
                         rolePos.setLocation(xPos + 1, yPos);
                     }
                     break;
